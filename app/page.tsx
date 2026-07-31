@@ -4,8 +4,8 @@ export default function Home() {
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
     <main>
-      <h1>Roxy Labs</h1>
-      <p>Experiments in AI, marketing, operations, and creative projects.</p>
+      <h1>roxy labs</h1>
+      <p>experiments in ai, automation, marketing, operations, and creative projects</p>
     </main>
     </div>
   );
