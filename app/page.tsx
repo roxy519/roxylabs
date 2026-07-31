@@ -13,7 +13,7 @@ export default function Home() {
     />
 
     <div>
-      <h1 className="text-5xl font-bold">roxy labs</h1>
+      <h1 className="text-5xl font-bold">roxylabs</h1>
 
       <p className="mt-4 text-xl text-neutral-400 max-w-xl">
         experiments in ai, automation, marketing,
