@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="420" viewBox="0 0 1400 420" role="img" aria-label="Roxylabs horizontal logo">
+
+<defs>
+  <linearGradient id="topGrad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#38D8C8"/>
+    <stop offset="100%" stop-color="#22C7C8"/>
+  </linearGradient>
+  <linearGradient id="legGrad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#2B93FF"/>
+    <stop offset="100%" stop-color="#245BFF"/>
+  </linearGradient>
+</defs>
+
+  <g transform="translate(30,-35) scale(.88)">
+    <path d="M112 96 H284 C354 96 408 150 408 220 C408 263 389 300 355 326 L307 284 C328 269 340 247 340 221 C340 186 313 160 278 160 H112 Z" fill="url(#topGrad)"/>
+    <path d="M112 398 V226 C112 192 137 168 170 168 C188 168 204 175 217 188 L388 359 H291 L182 250 C176 244 168 241 160 241 C148 241 140 250 140 263 V398 Z" fill="url(#legGrad)"/>
+  </g>
+  <text x="500" y="210"
+        fill="#F8FAFC"
+        font-family="Geist, Inter, Arial, sans-serif"
+        font-size="118"
+        font-weight="500"
+        letter-spacing="18">ROXYLABS</text>
+  <text x="505" y="285"
+        fill="#38D8C8"
+        font-family="Inter, Arial, sans-serif"
+        font-size="28"
+        font-weight="500"
+        letter-spacing="9">EXPERIMENT.  BUILD.  MOVE FORWARD.</text>
+</svg>
