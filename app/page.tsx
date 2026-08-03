@@ -6,7 +6,7 @@ export default function Home() {
   <main className="min-h-screen flex items-center justify-center">
   <div className="flex items-center gap-8">
     <Image
-      src="/roxylabs-mark-gradient.svg"
+      src="/roxylabs-mark-gradient.png"
       alt="Roxy Labs"
       width={120}
       height={120}
