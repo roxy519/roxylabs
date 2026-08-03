@@ -13,8 +13,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "roxy labs",
-  description: "stay tuned",
+  metadataBase: new URL("https://www.roxylabs.io"),
+  title: {
+    default: "roxylabs",
+    template: "%s · roxylabs",
+  },
+  description:
+    "Experiments in ai, automation, marketing, operations, and creative projects.",
+  openGraph: {
+    title: "roxylabs",
+    description:
+      "Experiments in ai, automation, marketing, operations, and creative projects.",
+    url: "https://www.roxylabs.io",
+    siteName: "roxylabs",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "roxylabs",
+    description:
+      "Experiments in ai, automation, marketing, operations, and creative projects.",
+  },
 };
 
 export default function RootLayout({
