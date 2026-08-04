@@ -39,6 +39,16 @@ export const experiments: Experiment[] = [
     href: "/experiments/gradients",
   },
   {
+    slug: "gradient-eye",
+    title: "Gradient Eye",
+    description:
+      "A game for your eyeballs. No numbers — just guess when the split is dead level (180°) and perfectly even (50/50), then see how close you got.",
+    status: "live",
+    year: 2026,
+    tags: ["game", "css", "fun"],
+    href: "/gradient-eye",
+  },
+  {
     slug: "utm-builder",
     title: "Campaign Link Builder",
     description:
