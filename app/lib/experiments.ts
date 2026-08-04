@@ -29,16 +29,6 @@ export type Experiment = {
 
 export const experiments: Experiment[] = [
   {
-    slug: "gradients",
-    title: "Gradient Studio",
-    description:
-      "Build a CSS gradient by ear — drag the colors, spin the angle, copy the code. No sign-up, no dependencies.",
-    status: "live",
-    year: 2026,
-    tags: ["tool", "css", "design"],
-    href: "/experiments/gradients",
-  },
-  {
     slug: "gradient-eye",
     title: "Gradient Eye",
     description:
@@ -47,6 +37,16 @@ export const experiments: Experiment[] = [
     year: 2026,
     tags: ["game", "css", "fun"],
     href: "/gradient-eye",
+  },
+  {
+    slug: "gradients",
+    title: "Gradient Studio",
+    description:
+      "Build a CSS gradient by ear — drag the colors, spin the angle, copy the code. No sign-up, no dependencies.",
+    status: "live",
+    year: 2026,
+    tags: ["tool", "css", "design"],
+    href: "/experiments/gradients",
   },
   {
     slug: "utm-builder",
