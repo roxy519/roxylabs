@@ -88,7 +88,7 @@ export default function Home() {
             <span className="brand-text">roxylabs</span>
           </h1>
           <p className="mt-3 max-w-xl text-base text-muted sm:text-lg">
-            experiments in ai, automation, marketing, operations, and creative
+            experiments in automation, marketing, operations, ai, and creative
             projects.
           </p>
         </div>
