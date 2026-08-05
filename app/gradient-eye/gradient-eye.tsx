@@ -12,8 +12,8 @@ const TOTAL_ROUNDS = 5;
 
 // A fixed, soft blend band (±BLUR around the split). Because it's smooth, the
 // tilt can't be read off jagged pixels — you have to judge the slope by eye —
-// and the fuzz makes the exact middle genuinely tricky.
-const BLUR = 16;
+// and the fuzz makes the exact middle genuinely tricky. Wider = harder.
+const BLUR = 20;
 
 // Each slider shows a *window* onto the real value, and the window is
 // re-rolled every round. So the target never sits at a fixed spot on the
