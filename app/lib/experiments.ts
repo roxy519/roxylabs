@@ -42,7 +42,7 @@ export const experiments: Experiment[] = [
     slug: "gradients",
     title: "Gradient Studio",
     description:
-      "Build a CSS gradient by ear — drag the colors, spin the angle, copy the code. No sign-up, no dependencies.",
+      "Build a CSS gradient — drag the colors, spin the angle, copy the code. No sign-up, no dependencies.",
     status: "live",
     year: 2026,
     tags: ["tool", "css", "design"],
@@ -57,6 +57,15 @@ export const experiments: Experiment[] = [
     year: 2026,
     tags: ["tool", "marketing", "ops"],
     href: "/experiments/utm-builder",
+  },
+    {
+    slug: "coming-soon",
+    title: "Coming Soon: SMS Credit Calculator",
+    description:
+      "Coming Soon: A simple calculator to estimate how many SMS credits you'll need for your campaigns and track usage over time. Perfect for marketers and developers alike.",
+    status: "planning",
+    year: 2026,
+    tags: ["tool", "marketing", "sms"],
   },
   {
     slug: "coming-soon",
