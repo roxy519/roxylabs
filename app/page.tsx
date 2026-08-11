@@ -116,7 +116,9 @@ export default function Home() {
       <footer className="mt-20 border-t border-[var(--border-solid)] pt-6 text-xs text-muted">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span>© {new Date().getFullYear()} roxylabs</span>
-          <span>built in public · always experimenting</span>
+          <span>built in public · always experimenting | <a href="https://roxycreates.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+            old site/creative work
+          </a></span>
         </div>
       </footer>
     </main>
