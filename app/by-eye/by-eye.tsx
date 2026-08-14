@@ -323,12 +323,12 @@ function scoreSetup(s: Setup): { score: number; detail?: Detail } {
 
 const COPY: Record<Setup["type"], string> = {
   gradient:
-    "Trust your eyes, not a readout. Nudge the blend until it sits perfectly level (180° horizontal) and dead center (vertical), then lock it in.",
-  word: "Nudge the word until it sits perfectly in the middle — horizontally and vertically aligned — and level it to 180° horizontal. No rulers. No cheating.",
-  color: "Make the triangle on the right match the one on the left. But be quick—you've got 30 seconds.",
-  circles: "Give every gap the same amount of breathing room.",
+    "Nudge the blend until it sits perfectly level (180° horizontal) and dead center (vertically), then lock it in.",
+  word: "Nudge the word until it sits perfectly in the middle&mdash;horizontally and vertically aligned&mdash;and level it to 180° horizontal.",
+  color: "Make the colors of the triangle on the right match the one on the left. But be quick&mdash;you've got 30 seconds.",
+  circles: "Match the circles to give every gap the same amount of breathing room.",
   optical:
-    "Move the dot to where the shapes feel balanced — the composition's visual center of gravity, which sits toward the bigger, denser shapes rather than the middle of the box.",
+    "Move the dot to where the shapes feel balanced&mdash;the composition's visual center of gravity.",
 };
 
 type Result = { score: number; verdict: string; detail?: Detail };
@@ -372,7 +372,7 @@ function Slider({
         type="range"
         min={min}
         max={max}
-        step={0.5}
+        step={0.25}
         value={value}
         disabled={disabled}
         onChange={(e) => onChange(Number(e.target.value))}
