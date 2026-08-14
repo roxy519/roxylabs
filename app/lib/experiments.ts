@@ -31,7 +31,7 @@ export const experiments: Experiment[] = [
   {
     slug: "by-eye",
     title: "By Eye",
-    description: "Five rounds of visual instinct. No rulers. No readouts.",
+    description: "Five rounds of visual instinct.",
     status: "live",
     year: 2026,
     tags: ["game", "fun"],
