@@ -121,7 +121,7 @@ type Color = {
   ref: [number, number, number];
   cur: [number, number, number];
 };
-type Disc = { x: number; y: number; r: number };
+type Disc = { x: number; y: number; d: number }; // d = diameter, % of width
 type Circles = { type: "circles"; left: Disc; right: Disc; target: Disc };
 type OShape = {
   kind: "circle" | "triangle" | "rect";
@@ -217,16 +217,19 @@ function makeColor(): Color {
 }
 
 function makeCircles(): Circles {
-  const r = Math.round(rand(14, 21));
-  const lx = Math.round(rand(30, 38)); // left circle sits left-of-centre
-  const ly = Math.round(rand(38, 62));
-  const left: Disc = { x: lx, y: ly, r };
-  const target: Disc = { x: 100 - lx, y: ly, r }; // mirror → balanced, equal, level
+  // Everything horizontal is in % of width, so the three gaps stay equal on any
+  // screen. Solved layout: two equal circles, vertically centered, with equal
+  // left / middle / right gaps.
+  const d = Math.round(rand(12, 18)); // diameter, % of width
+  const gap = (100 - 2 * d) / 3; // equal gap either side of and between them
+  const lx = Math.round(gap + d / 2);
+  const left: Disc = { x: lx, y: 50, d };
+  const target: Disc = { x: 100 - lx, y: 50, d };
   const sign = () => (Math.random() < 0.5 ? -1 : 1);
   const right: Disc = {
-    x: clamp(target.x + sign() * Math.round(rand(10, 22)), 52, 92),
-    y: clamp(ly + sign() * Math.round(rand(12, 24)), 16, 84),
-    r: clamp(r + sign() * Math.round(rand(5, 9)), 8, 27),
+    x: clamp(target.x + sign() * Math.round(rand(8, 18)), 55, 90),
+    y: clamp(50 + sign() * Math.round(rand(12, 26)), 18, 82),
+    d: clamp(d + sign() * Math.round(rand(4, 8)), 8, 24),
   };
   return { type: "circles", left, right, target };
 }
@@ -307,8 +310,8 @@ function scoreSetup(s: Setup): { score: number; detail?: Detail } {
     case "circles": {
       const sx = posScore(Math.abs(s.right.x - s.target.x));
       const sy = posScore(Math.abs(s.right.y - s.target.y));
-      const sr = Math.max(0, 1 - Math.abs(s.right.r - s.target.r) / 14);
-      return { score: Math.round(((sx + sy + sr) / 3) * 100) };
+      const sd = Math.max(0, 1 - Math.abs(s.right.d - s.target.d) / 12);
+      return { score: Math.round(((sx + sy + sd) / 3) * 100) };
     }
     case "optical": {
       const sx = posScore(Math.abs(s.dot.x - s.target.x));
@@ -322,9 +325,10 @@ const COPY: Record<Setup["type"], string> = {
   gradient:
     "Trust your eyes, not a readout. Nudge the blend until it sits perfectly level (180° horizontal) and dead center (vertical), then lock it in.",
   word: "Nudge the word until it sits perfectly in the middle — horizontally and vertically aligned — and level it to 180° horizontal. No rulers. No cheating.",
-  color: "Make the triangle on the right match the one on the left. But be quick--you've got 30 seconds.",
+  color: "Make the triangle on the right match the one on the left. But be quick—you've got 30 seconds.",
   circles: "Give every gap the same amount of breathing room.",
-  optical: "Find the composition's optical center.",
+  optical:
+    "Move the dot to where the shapes feel balanced — the composition's visual center of gravity, which sits toward the bigger, denser shapes rather than the middle of the box.",
 };
 
 type Result = { score: number; verdict: string; detail?: Detail };
@@ -668,11 +672,11 @@ function Playfield({
         <>
           <div
             className="absolute aspect-square -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{ height: `${2 * setup.left.r}%`, left: `${setup.left.x}%`, top: `${setup.left.y}%`, background: "#8a8a8d" }}
+            style={{ width: `${setup.left.d}%`, left: `${setup.left.x}%`, top: `${setup.left.y}%`, background: "#8a8a8d" }}
           />
           <div
             className="absolute aspect-square -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{ height: `${2 * setup.right.r}%`, left: `${setup.right.x}%`, top: `${setup.right.y}%`, background: "var(--brand-1)" }}
+            style={{ width: `${setup.right.d}%`, left: `${setup.right.x}%`, top: `${setup.right.y}%`, background: "var(--brand-1)" }}
           />
         </>
       )}
@@ -699,9 +703,11 @@ function Playfield({
             );
           })}
           <div
-            className="absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--brand-1)]"
-            style={{ left: `${setup.dot.x}%`, top: `${setup.dot.y}%`, background: "rgba(124,92,255,0.35)" }}
-          />
+            className="absolute flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-[var(--brand-1)] shadow-[0_0_0_4px_rgba(124,92,255,0.15)]"
+            style={{ left: `${setup.dot.x}%`, top: `${setup.dot.y}%`, background: "rgba(124,92,255,0.2)" }}
+          >
+            <div className="h-1.5 w-1.5 rounded-full bg-[var(--brand-1)]" />
+          </div>
         </>
       )}
     </div>
@@ -794,7 +800,7 @@ function Controls({
       <>
         <Slider label="horizontal" min={0} max={100} value={setup.right.x} disabled={locked} onChange={setR("x")} />
         <Slider label="vertical" min={0} max={100} value={setup.right.y} disabled={locked} onChange={setR("y")} />
-        <Slider label="size" min={6} max={30} value={setup.right.r} disabled={locked} onChange={setR("r")} />
+        <Slider label="size" min={6} max={26} value={setup.right.d} disabled={locked} onChange={setR("d")} />
       </>
     );
   }
