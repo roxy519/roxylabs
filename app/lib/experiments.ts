@@ -29,14 +29,13 @@ export type Experiment = {
 
 export const experiments: Experiment[] = [
   {
-    slug: "gradient-eye",
-    title: "Gradient Eye",
-    description:
-      "A game for your eyeballs. No numbers — just guess when the split is dead level (180°) and perfectly even (50/50), then see how close you got.",
+    slug: "by-eye",
+    title: "By Eye",
+    description: "Five rounds of visual instinct. No rulers. No readouts.",
     status: "live",
     year: 2026,
-    tags: ["game", "css", "fun"],
-    href: "/gradient-eye",
+    tags: ["game", "fun"],
+    href: "/by-eye",
   },
   {
     slug: "gradients",
@@ -58,8 +57,8 @@ export const experiments: Experiment[] = [
     tags: ["tool", "marketing", "ops"],
     href: "/experiments/utm-builder",
   },
-    {
-    slug: "coming-soon",
+  {
+    slug: "sms-credit-calculator",
     title: "Coming Soon: SMS Credit Calculator",
     description:
       "A simple calculator to estimate how many SMS credits you'll need for your campaigns and track usage over time. Perfect for marketers and developers alike.",
