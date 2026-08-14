@@ -47,7 +47,7 @@ function sassyRound(score: number): string {
   if (score >= 90)
     return pick(["Razor sharp.", "Dead-on.", "You've clearly done this.", "Crisp."]);
   if (score >= 80)
-    return pick(["Solid.", "Respectable.", "Not bad at all.", "You can see — congrats."]);
+    return pick(["Solid.", "Respectable.", "Not bad at all.", "Okayyyy."]);
   if (score >= 70)
     return pick(["Eh, decent.", "Passable.", "We'll allow it.", "Your eye is... fine."]);
   if (score >= 55)
@@ -324,11 +324,11 @@ function scoreSetup(s: Setup): { score: number; detail?: Detail } {
 const COPY: Record<Setup["type"], string> = {
   gradient:
     "Nudge the blend until it sits perfectly level (180° horizontal) and dead center (vertically), then lock it in.",
-  word: "Nudge the word until it sits perfectly in the middle&mdash;horizontally and vertically aligned&mdash;and level it to 180° horizontal.",
-  color: "Make the colors of the triangle on the right match the one on the left. But be quick&mdash;you've got 30 seconds.",
+  word: "Nudge the word until it sits perfectly in the middle—horizontally and vertically aligned—and level it to 180° horizontal.",
+  color: "Make the color of the triangle on the right match the one on the left. But be quick—you've got 30 seconds.",
   circles: "Match the circles to give every gap the same amount of breathing room.",
   optical:
-    "Move the dot to where the shapes feel balanced&mdash;the composition's visual center of gravity.",
+    "Move the dot to where the shapes feel balanced—the composition's visual center of gravity.",
 };
 
 type Result = { score: number; verdict: string; detail?: Detail };
