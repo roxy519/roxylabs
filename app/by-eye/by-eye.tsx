@@ -111,8 +111,10 @@ type Word = {
   def: string;
   x: number;
   y: number;
+  rot: number;
   xMin: number;
   yMin: number;
+  rotMin: number;
 };
 type Color = {
   type: "color";
@@ -146,6 +148,7 @@ const WORDS: { word: string; def: string }[] = [
 ];
 
 const WORD_WIN = 80; // slider window width for the word round
+const ROT_WIN = 120; // tilt slider window; target is 180° (upright / level)
 
 // Place `target` at a random spot inside a `width`-wide window within [0,100],
 // so the target never sits at a fixed (e.g. centered) point on the track.
@@ -177,12 +180,22 @@ function makeWord(): Word {
   const { word, def } = pick(WORDS);
   const xMin = windowMin(50, WORD_WIN);
   const yMin = windowMin(50, WORD_WIN);
+  // Tilt target is 180 (upright). Window it so 180 never sits at the track's
+  // center, and start clearly — but readably — tilted (18–40°).
+  const rotMin = Math.round(180 - rand(0.28, 0.72) * ROT_WIN);
+  const rot = clamp(
+    180 + (Math.random() < 0.5 ? -1 : 1) * Math.round(rand(18, 40)),
+    rotMin,
+    rotMin + ROT_WIN,
+  );
   return {
     type: "word",
     word,
     def,
     xMin,
     yMin,
+    rotMin,
+    rot,
     x: offStart(xMin, WORD_WIN, 50, 16),
     y: offStart(yMin, WORD_WIN, 50, 16),
   };
@@ -280,7 +293,8 @@ function scoreSetup(s: Setup): { score: number; detail?: Detail } {
     case "word": {
       const h = posScore(Math.abs(s.x - 50));
       const v = posScore(Math.abs(s.y - 50));
-      return { score: Math.round(((h + v) / 2) * 100) };
+      const r = Math.max(0, 1 - Math.abs(s.rot - 180) / 45);
+      return { score: Math.round(((h + v + r) / 3) * 100) };
     }
     case "color": {
       let dh = Math.abs(s.ref[0] - s.cur[0]);
@@ -307,7 +321,7 @@ function scoreSetup(s: Setup): { score: number; detail?: Detail } {
 const COPY: Record<Setup["type"], string> = {
   gradient:
     "Trust your eyes, not a readout. Nudge the blend until it sits perfectly level (180° horizontal) and dead center (vertical), then lock it in.",
-  word: "Nudge the word until it sits perfectly in the middle. Both horizontally and vertically aligned. No rulers. No cheating.",
+  word: "Nudge the word until it sits perfectly in the middle — horizontally and vertically aligned — and level it to 180° horizontal. No rulers. No cheating.",
   color: "Make the triangle on the right match the one on the left. But be quick--you've got 30 seconds.",
   circles: "Give every gap the same amount of breathing room.",
   optical: "Find the composition's optical center.",
@@ -615,8 +629,12 @@ function Playfield({
     <div className={`relative bg-[var(--surface)] ${FIELD_CLS}`}>
       {setup.type === "word" && (
         <div
-          className="absolute w-[80%] max-w-md -translate-x-1/2 -translate-y-1/2 px-2 text-center"
-          style={{ left: `${setup.x}%`, top: `${setup.y}%` }}
+          className="absolute w-[80%] max-w-md px-2 text-center"
+          style={{
+            left: `${setup.x}%`,
+            top: `${setup.y}%`,
+            transform: `translate(-50%, -50%) rotate(${setup.rot - 180}deg)`,
+          }}
         >
           <div className="text-xl font-semibold text-foreground sm:text-2xl">{setup.word}</div>
           <div className="mt-1 text-sm text-muted">{setup.def}</div>
@@ -626,7 +644,12 @@ function Playfield({
       {setup.type === "color" && (
         <>
           {!locked && (
-            <div className="absolute right-3 top-3 text-xs tabular-nums text-muted">{timeLeft}s</div>
+            <div
+              className="absolute right-3 top-3 text-sm font-semibold tabular-nums"
+              style={{ color: timeLeft <= 10 ? "#ea2626" : "#38d8cb" }}
+            >
+              {timeLeft}s
+            </div>
           )}
           <div className="absolute inset-0 flex items-center justify-center gap-8 sm:gap-12">
             <div
@@ -742,6 +765,7 @@ function Controls({
       <>
         <Slider label="horizontal" min={setup.xMin} max={setup.xMin + WORD_WIN} value={setup.x} disabled={locked} onChange={(v) => setSetup((s) => (s.type === "word" ? { ...s, x: v } : s))} />
         <Slider label="vertical" min={setup.yMin} max={setup.yMin + WORD_WIN} value={setup.y} disabled={locked} onChange={(v) => setSetup((s) => (s.type === "word" ? { ...s, y: v } : s))} />
+        <Slider label="tilt" min={setup.rotMin} max={setup.rotMin + ROT_WIN} value={setup.rot} disabled={locked} onChange={(v) => setSetup((s) => (s.type === "word" ? { ...s, rot: v } : s))} />
       </>
     );
   }
