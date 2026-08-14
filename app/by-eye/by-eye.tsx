@@ -308,7 +308,7 @@ const COPY: Record<Setup["type"], string> = {
   gradient:
     "Trust your eyes, not a readout. Nudge the blend until it sits perfectly level (180° horizontal) and dead center (vertical), then lock it in.",
   word: "Nudge the word until it sits perfectly in the middle. Both horizontally and vertically aligned. No rulers. No cheating.",
-  color: "Make the triangle on the right match the one on the left.",
+  color: "Make the triangle on the right match the one on the left. But be quick--you've got 30 seconds.",
   circles: "Give every gap the same amount of breathing room.",
   optical: "Find the composition's optical center.",
 };
@@ -354,6 +354,7 @@ function Slider({
         type="range"
         min={min}
         max={max}
+        step={0.5}
         value={value}
         disabled={disabled}
         onChange={(e) => onChange(Number(e.target.value))}
@@ -372,6 +373,7 @@ export default function ByEye() {
   const [finalMsg, setFinalMsg] = useState("");
   const [copied, setCopied] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30);
+  const [timedOut, setTimedOut] = useState(false);
 
   const locked = result !== null;
   const isFinal = locked && round >= TOTAL_ROUNDS;
@@ -411,6 +413,7 @@ export default function ByEye() {
       setTimeLeft(remaining);
       if (remaining <= 0) {
         clearInterval(id);
+        setTimedOut(true);
         lockInRef.current();
       }
     }, 1000);
@@ -422,6 +425,7 @@ export default function ByEye() {
     setRound(n);
     setSetup(makeRound(n));
     setResult(null);
+    setTimedOut(false);
     if (n === 3) setTimeLeft(30);
   }
 
@@ -431,6 +435,7 @@ export default function ByEye() {
     setFinalMsg("");
     setCopied(false);
     setResult(null);
+    setTimedOut(false);
     setSetup(makeRound(1));
   }
 
@@ -509,6 +514,9 @@ export default function ByEye() {
             <span className="brand-text">{result.score}</span>
             <span className="text-2xl text-muted">/100</span>
           </div>
+          {timedOut && (
+            <p className="mt-1 text-sm font-semibold text-amber-400">⏱ Time&apos;s up!</p>
+          )}
           <p className="mt-1 text-sm text-foreground">{result.verdict}</p>
 
           {result.detail && (
@@ -540,6 +548,19 @@ export default function ByEye() {
 
       {isFinal && (
         <div className="mt-8 rounded-2xl border border-[var(--border-solid)] bg-[var(--surface)] p-6 text-center">
+          {result && (
+            <div className="mb-6 border-b border-[var(--border-solid)] pb-6">
+              <div className="text-xs uppercase tracking-widest text-muted">round 5</div>
+              {timedOut && (
+                <p className="mt-1 text-sm font-semibold text-amber-400">⏱ Time&apos;s up!</p>
+              )}
+              <div className="mt-1 text-3xl font-bold">
+                <span className="brand-text">{result.score}</span>
+                <span className="text-lg text-muted">/100</span>
+              </div>
+              <p className="mt-1 text-sm text-foreground">{result.verdict}</p>
+            </div>
+          )}
           <div className="text-xs uppercase tracking-widest text-muted">final score</div>
           <div className="mt-1 text-6xl font-bold brand-text">{finalTotal}</div>
           <p className="mt-1 text-sm text-foreground">{finalMsg}</p>
