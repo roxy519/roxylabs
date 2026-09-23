@@ -61,7 +61,7 @@ export const experiments: Experiment[] = [
     slug: "sms-credit-calculator",
     title: "Coming Soon: SMS Credit Calculator",
     description:
-      "A simple calculator to estimate how many SMS credits you'll need for your campaigns and track usage over time. Perfect for marketers and developers alike.",
+      "A simple calculator to estimate how many SMS credits you'll need for your campaigns and track usage over time. Perfect for marketing and sales alike.",
     status: "building",
     year: 2026,
     tags: ["tool", "marketing", "sms"],
