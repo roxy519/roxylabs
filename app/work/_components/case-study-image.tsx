@@ -22,31 +22,26 @@ export function CaseStudyImage({
 
   return (
     <>
-      <div
-        style={{ marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)" }}
-        className="flex justify-center px-6"
-      >
-        <div className="w-full max-w-[1040px]">
-          <button
-            type="button"
-            onClick={() => setExpanded(true)}
-            className="block w-full cursor-zoom-in overflow-hidden rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-2 transition-colors hover:bg-[var(--surface-hover)] sm:p-3"
-            aria-label={`Expand image: ${alt}`}
-          >
-            <Image
-              src={src}
-              alt={alt}
-              width={width}
-              height={height}
-              className="w-full rounded-lg"
-              sizes="(min-width: 1040px) 1040px, 100vw"
-            />
-          </button>
-          <p className="mt-3 text-sm leading-relaxed text-foreground">
-            {caption}
-          </p>
-          <p className="mt-1 text-xs text-muted">{subcaption}</p>
-        </div>
+      <div className="w-full">
+        <button
+          type="button"
+          onClick={() => setExpanded(true)}
+          className="block w-full cursor-zoom-in overflow-hidden rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-2 transition-colors hover:bg-[var(--surface-hover)] sm:p-3"
+          aria-label={`Expand image: ${alt}`}
+        >
+          <Image
+            src={src}
+            alt={alt}
+            width={width}
+            height={height}
+            className="w-full rounded-lg"
+            sizes="(min-width: 768px) 720px, 100vw"
+          />
+        </button>
+        <p className="mt-3 text-sm leading-relaxed text-foreground">
+          {caption}
+        </p>
+        <p className="mt-1 text-xs text-muted">{subcaption}</p>
       </div>
 
       {expanded && (
