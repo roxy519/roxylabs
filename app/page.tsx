@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { experiments, type Experiment } from "@/app/lib/experiments";
+import { caseStudies } from "@/app/lib/case-studies";
 
 const statusLabel: Record<Experiment["status"], string> = {
   live: "live",
@@ -91,6 +92,51 @@ export default function Home() {
             experiments in automation, marketing, operations, ai, and creative
             projects.
           </p>
+        </div>
+      </section>
+
+      {/* Selected work */}
+      <section className="mt-16">
+        <div className="mb-6 flex items-baseline justify-between">
+          <h2 className="text-sm uppercase tracking-widest text-muted">
+            selected work
+          </h2>
+          <Link
+            href="/work"
+            className="text-xs text-muted transition-colors hover:text-foreground"
+          >
+            applied AI overview →
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {caseStudies.map((study) => (
+            <Link
+              key={study.slug}
+              href={`/work/${study.slug}`}
+              className="group flex flex-col rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-5 transition-colors hover:bg-[var(--surface-hover)]"
+            >
+              <div className="flex flex-wrap gap-1.5">
+                {study.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-[var(--border-solid)] px-2 py-0.5 text-xs text-muted"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <h3 className="mt-3 text-lg font-semibold text-foreground">
+                {study.title}
+                <span className="ml-1 inline-block text-muted transition-transform group-hover:translate-x-0.5">
+                  →
+                </span>
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted">
+                {study.summary}
+              </p>
+            </Link>
+          ))}
         </div>
       </section>
 
