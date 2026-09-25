@@ -6,11 +6,15 @@ export function CaseStudyShell({
   title,
   tags,
   children,
+  prevLink = { href: "/work", label: "← back to selected work" },
+  nextLink,
 }: {
   eyebrow: string;
   title: string;
   tags: string[];
   children: ReactNode;
+  prevLink?: { href: string; label: string };
+  nextLink?: { href: string; label: string };
 }) {
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-12">
@@ -45,13 +49,21 @@ export function CaseStudyShell({
         Proprietary company information has been removed.
       </div>
 
-      <div className="mt-8 border-t border-[var(--border-solid)] pt-6">
+      <div className="mt-8 flex items-center justify-between gap-4 border-t border-[var(--border-solid)] pt-6">
         <Link
-          href="/work"
+          href={prevLink.href}
           className="text-sm text-muted transition-colors hover:text-foreground"
         >
-          ← back to selected work
+          {prevLink.label}
         </Link>
+        {nextLink && (
+          <Link
+            href={nextLink.href}
+            className="text-sm text-muted transition-colors hover:text-foreground"
+          >
+            {nextLink.label}
+          </Link>
+        )}
       </div>
     </main>
   );

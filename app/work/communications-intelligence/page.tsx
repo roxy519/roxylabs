@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CaseStudyShell, Section, List, SubHeading } from "../_components/case-study";
+import { CaseStudyImage } from "../_components/case-study-image";
 
 export const metadata: Metadata = {
   title: "Communications Intelligence",
@@ -13,6 +14,7 @@ export default function Page() {
       eyebrow="Applied AI · Customer Experience · Omnichannel Strategy · Digital Transformation"
       title="Turning Fragmented Customer Communications Into a Connected View"
       tags={["Applied AI", "Customer Experience", "Digital Transformation"]}
+      nextLink={{ href: "/work/sms-optimization", label: "Next: SMS Optimization →" }}
     >
       <Section heading="The challenge">
         <p>
@@ -54,6 +56,15 @@ export default function Page() {
         <p>This turns a large, complex dataset into something stakeholders can actually explore.</p>
       </Section>
 
+      <CaseStudyImage
+        src="/Comms-timeline-preview.png"
+        alt="Sanitized screenshot of the communications intelligence workspace, showing the timeline view with channel, category, and product filters"
+        width={1652}
+        height={952}
+        caption="Sanitized view of the communications intelligence workspace. Stakeholders can filter mapped communications by channel, category, and product, and move between landscape, timeline, and best-practice views to explore the customer journey."
+        subcaption="Recreated with representative data. Proprietary company information and performance data have been removed."
+      />
+
       <Section heading="What it enables">
         <p>Instead of simply documenting what exists, the tool helps teams identify:</p>
         <List
@@ -77,8 +88,9 @@ export default function Page() {
         <p>
           I led the broader communications-mapping initiative, worked across
           organizational boundaries to understand the underlying customer
-          experience, structured the information, and used AI to turn that
-          information into more usable and dynamic views.
+          experience, structured and categorized the information, and used
+          AI-assisted development to turn it into an interactive analytical
+          workspace with dynamic filtering and multiple views.
         </p>
         <p>
           The work sits at the intersection of customer experience, digital
