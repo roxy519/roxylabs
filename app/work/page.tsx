@@ -2,10 +2,25 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { caseStudies } from "@/app/lib/case-studies";
 
+const OG_TITLE = "Applied AI & Digital Transformation | RoxyLabs";
+const OG_DESCRIPTION =
+  "Selected work exploring how AI, automation, and digital tools can solve real customer experience and marketing operations problems.";
+
 export const metadata: Metadata = {
   title: "Applied AI & Digital Transformation",
   description:
     "Digital transformation & applied AI — sanitized case studies from building AI-enabled tools for real business problems.",
+  openGraph: {
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
+    url: "/work",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
+  },
 };
 
 export default function WorkPage() {

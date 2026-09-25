@@ -2,10 +2,25 @@ import type { Metadata } from "next";
 import { CaseStudyShell, Section, List, SubHeading } from "../_components/case-study";
 import { CaseStudyImage } from "../_components/case-study-image";
 
+const OG_TITLE = "Communications Intelligence | RoxyLabs";
+const OG_DESCRIPTION =
+  "Turning fragmented customer communications into an interactive view of the customer journey.";
+
 export const metadata: Metadata = {
   title: "Communications Intelligence",
   description:
     "Turning fragmented customer communications into a connected view — a sanitized case study in applied AI and digital transformation.",
+  openGraph: {
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
+    url: "/work/communications-intelligence",
+    type: "article",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
+  },
 };
 
 export default function Page() {
