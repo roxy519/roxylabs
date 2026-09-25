@@ -89,8 +89,8 @@ export default function Home() {
             <span className="brand-text">roxylabs</span>
           </h1>
           <p className="mt-3 max-w-xl text-base text-muted sm:text-lg">
-            experiments in automation, marketing, operations, ai, and creative
-            projects.
+            experiments and selected work in automation, marketing,
+            operations, AI, and creative technology.
           </p>
         </div>
       </section>
@@ -105,7 +105,7 @@ export default function Home() {
             href="/work"
             className="text-xs text-muted transition-colors hover:text-foreground"
           >
-            applied AI overview →
+            how I approach applied AI →
           </Link>
         </div>
 
@@ -163,7 +163,9 @@ export default function Home() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span>© {new Date().getFullYear()} roxylabs</span>
           <span>built in public · always experimenting | <a href="https://roxycreates.com" target="_blank" style={{ color: '#ebebeb' }} rel="noopener noreferrer" className="text-primary hover:underline">
-            old site/creative work &#8594; 
+            old site/creative work &#8594;
+          </a> | <a href="https://www.linkedin.com/in/rbischoff/" target="_blank" style={{ color: '#ebebeb' }} rel="noopener noreferrer" className="text-primary hover:underline">
+            LinkedIn ↗
           </a></span>
         </div>
       </footer>

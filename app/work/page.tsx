@@ -3,7 +3,7 @@ import Link from "next/link";
 import { caseStudies } from "@/app/lib/case-studies";
 
 export const metadata: Metadata = {
-  title: "Selected Work",
+  title: "Applied AI & Digital Transformation",
   description:
     "Digital transformation & applied AI — sanitized case studies from building AI-enabled tools for real business problems.",
 };
@@ -106,9 +106,10 @@ export default function WorkPage() {
           </p>
           <p>
             Across these initiatives, my role spans problem identification,
-            solution design, hands-on AI prototyping and development,
-            workflow design, stakeholder collaboration, and planning how
-            individual capabilities evolve into more scalable systems.
+            solution design, hands-on AI-assisted prototyping and
+            development, workflow design, stakeholder collaboration, and
+            planning how individual capabilities evolve into more scalable
+            systems.
           </p>
         </div>
       </section>

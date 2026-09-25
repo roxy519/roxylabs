@@ -19,7 +19,7 @@ export const caseStudies: CaseStudy[] = [
     subtitle: "Turning fragmented customer communications into a connected view",
     tags: ["Applied AI", "Customer Experience", "Digital Transformation"],
     summary:
-      "Mapped a company's customer communications across teams, products, and channels, then used AI to turn that map into an interactive tool for spotting gaps and overlaps.",
+      "Led a cross-functional communications mapping initiative, then used AI-assisted development to turn the data into an interactive tool for exploring the customer journey and identifying gaps and overlaps.",
     year: 2026,
   },
   {
@@ -28,7 +28,7 @@ export const caseStudies: CaseStudy[] = [
     subtitle: "Building an AI-enabled SMS optimization tool",
     tags: ["Applied AI", "Marketing Operations", "Decision Support"],
     summary:
-      "Designed and built a tool that brings cost estimation, cost-saving recommendations, copy optimization, and campaign planning into one workflow.",
+      "Designed and built an AI-enabled workspace for SMS cost estimation, campaign planning, copy optimization, and decision support.",
     year: 2026,
   },
 ];

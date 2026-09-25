@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CaseStudyShell, Section, List, SubHeading } from "../_components/case-study";
+import { CaseStudyShell, Section, SubHeading } from "../_components/case-study";
+import { CaseStudyImage } from "../_components/case-study-image";
 
 export const metadata: Metadata = {
   title: "SMS Optimization",
@@ -13,6 +14,8 @@ export default function Page() {
       eyebrow="Applied AI · Marketing Operations · SMS · Decision Support · Cost Optimization"
       title="Building an AI-Enabled SMS Optimization Tool"
       tags={["Applied AI", "Marketing Operations", "Decision Support"]}
+      prevLink={{ href: "/work/communications-intelligence", label: "← Communications Intelligence" }}
+      nextLink={{ href: "/work", label: "Selected Work ↑" }}
     >
       <Section heading="The challenge">
         <p>
@@ -31,10 +34,20 @@ export default function Page() {
 
       <Section heading="The solution">
         <p>
-          I designed and built an AI-enabled SMS optimization tool that
-          helps marketers evaluate and improve a send before it goes out.
-          The tool brings several capabilities into one experience:
+          I designed and built an AI-enabled SMS optimization workspace that
+          brings planning, cost estimation, technical SMS analysis, campaign
+          management, and copy optimization into one experience.
         </p>
+
+        <CaseStudyImage
+          src="/SMS-optimizer-preview.png"
+          alt="Sanitized screenshot of the SMS optimization workspace, showing the message calculator and credit estimate"
+          width={790}
+          height={925}
+          caption="Sanitized view of the SMS optimization workspace, combining message planning, credit estimation, SMS encoding and segmentation analysis, campaign management, and copy guidance."
+          subcaption="Recreated with representative data. Proprietary company information, internal cost structures, and campaign data have been removed."
+        />
+
         <div>
           <SubHeading>Credit and cost estimation</SubHeading>
           <p>
@@ -77,13 +90,23 @@ export default function Page() {
           designed it with a broader optimization model in mind. The next
           stage incorporates:
         </p>
-        <List
-          items={[
+        <ul className="space-y-3">
+          {[
             "Historical campaign performance — using previous sends to inform recommendations around copy, timing, and other campaign decisions.",
             "Generative SMS copy — creating draft copy based on campaign objectives and requirements, building on prior work developing AI-powered email copy generation.",
             "Integrated UTM creation — connecting the tool with a separate UTM/link builder so campaign setup becomes more streamlined and consistent.",
-          ]}
-        />
+          ].map((item) => (
+            <li key={item} className="flex gap-2 text-sm leading-relaxed">
+              <span className="text-muted">–</span>
+              <span>
+                <span className="mr-1.5 inline-block rounded-full border border-[var(--border-solid)] px-2 py-0.5 align-middle text-[10px] uppercase tracking-wide text-muted">
+                  planned
+                </span>
+                {item}
+              </span>
+            </li>
+          ))}
+        </ul>
         <p>
           Over time, the goal is to move from a collection of utilities
           toward a connected system that can help marketers plan, create,
@@ -93,11 +116,11 @@ export default function Page() {
 
       <Section heading="My role">
         <p>
-          I identified the operational opportunity, designed the solution
-          and workflow, and used AI to build the tool and its optimization
-          capabilities. I am also defining its evolution from a practical
-          operational utility into a more data-informed decision-support
-          system.
+          I identified the operational opportunity, designed the product and
+          workflow, and used AI-assisted development to build the working
+          application and its optimization capabilities. I am also defining
+          its evolution from a practical operational utility into a more
+          data-informed decision-support system.
         </p>
       </Section>
 
