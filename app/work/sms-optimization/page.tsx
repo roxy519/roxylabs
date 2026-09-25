@@ -2,10 +2,25 @@ import type { Metadata } from "next";
 import { CaseStudyShell, Section, SubHeading } from "../_components/case-study";
 import { CaseStudyImage } from "../_components/case-study-image";
 
+const OG_TITLE = "SMS Optimization | RoxyLabs";
+const OG_DESCRIPTION =
+  "An AI-enabled workspace for SMS planning, credit estimation, technical analysis, and copy optimization.";
+
 export const metadata: Metadata = {
   title: "SMS Optimization",
   description:
     "Building an AI-enabled SMS optimization tool — a sanitized case study in applied AI and marketing operations.",
+  openGraph: {
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
+    url: "/work/sms-optimization",
+    type: "article",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
+  },
 };
 
 export default function Page() {
