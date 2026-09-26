@@ -10,6 +10,15 @@
 
 export type ExperimentStatus = "live" | "building" | "idea";
 
+/** Which small watermark motif a card renders. New entries can omit this —
+ * the card falls back to a generic dot-cluster motif. */
+export type ExperimentVisual =
+  | "eye"
+  | "gradient"
+  | "link"
+  | "credits"
+  | "generic";
+
 export type Experiment = {
   /** URL-safe id, also used as the React key. */
   slug: string;
@@ -25,6 +34,8 @@ export type Experiment = {
   href?: string;
   /** True when `href` points somewhere off this site. */
   external?: boolean;
+  /** Small watermark motif for the card. Defaults to "generic". */
+  visual?: ExperimentVisual;
 };
 
 export const experiments: Experiment[] = [
@@ -36,6 +47,7 @@ export const experiments: Experiment[] = [
     year: 2026,
     tags: ["game", "fun"],
     href: "/by-eye",
+    visual: "eye",
   },
   {
     slug: "gradients",
@@ -46,6 +58,7 @@ export const experiments: Experiment[] = [
     year: 2026,
     tags: ["tool", "css", "design"],
     href: "/experiments/gradients",
+    visual: "gradient",
   },
   {
     slug: "utm-builder",
@@ -56,6 +69,7 @@ export const experiments: Experiment[] = [
     year: 2026,
     tags: ["tool", "marketing", "ops"],
     href: "/experiments/utm-builder",
+    visual: "link",
   },
   {
     slug: "sms-credit-calculator",
@@ -65,6 +79,7 @@ export const experiments: Experiment[] = [
     status: "building",
     year: 2026,
     tags: ["tool", "marketing", "sms"],
+    visual: "credits",
   },
   {
     slug: "coming-soon",

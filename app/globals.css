@@ -1,25 +1,43 @@
 @import "tailwindcss";
 
 :root {
-  /* Core palette — dark by default, this is a lab at night. */
-  --background: #1c1d1f;
-  --surface: #242526;
-  --surface-hover: #2c2d2f;
-  --border: #34353800;
-  --border-solid: #343538;
+  /* Core palette — very dark navy-charcoal, not flat black. A lab at night. */
+  --background: #12131a;
+  --surface: #181a23;
+  --surface-hover: #20222e;
+  --border: #2a2d3a00;
+  --border-solid: #2a2d3a;
   --foreground: #ededed;
-  --muted: #9a9a9d;
+  --muted: #9ea0ab;
 
-  /* Brand gradient, reused for accents, badges, and glows. */
-  --brand-1: #7c5cff;
-  --brand-2: #ff5c8a;
-  --brand-3: #ffb25c;
+  /* RoxyLabs gradient system: magenta -> purple -> electric blue -> cyan. */
+  --color-magenta: #ff2f8f;
+  --color-purple: #7c5cff;
+  --color-blue: #3b82f6;
+  --color-cyan: #22d3ee;
+
+  /* Back-compat aliases — existing tools (By Eye, Gradient Studio, UTM
+     Builder) key their accent/focus colors off these three names. */
+  --brand-1: var(--color-purple);
+  --brand-2: var(--color-magenta);
+  --brand-3: var(--color-cyan);
+
   --brand-gradient: linear-gradient(
     120deg,
-    var(--brand-1),
-    var(--brand-2),
-    var(--brand-3)
+    var(--color-magenta),
+    var(--color-purple),
+    var(--color-blue),
+    var(--color-cyan)
   );
+
+  /* Soft brand-tinted glows for cards, frames, and backdrops. */
+  --glow-magenta: rgba(255, 47, 143, 0.32);
+  --glow-purple: rgba(124, 92, 255, 0.32);
+  --glow-cyan: rgba(34, 211, 238, 0.28);
+
+  /* Hairline grid texture, tuned to stay near-subliminal on dark backgrounds. */
+  --grid-line: rgba(237, 237, 237, 0.05);
+  --grid-line-strong: rgba(237, 237, 237, 0.08);
 }
 
 @theme inline {
@@ -54,6 +72,110 @@ a {
 ::selection {
   background: var(--brand-1);
   color: white;
+}
+
+/* ---------------------------------------------------------------------
+   Shared decorative system — grid textures, gradient-border cards, glow
+   frames, and accent rules. Reused across the homepage, selected-work
+   cards, experiment cards, and case studies instead of one-off styles.
+   ------------------------------------------------------------------- */
+
+/* Faint technical grid texture. Apply to an absolutely-positioned layer,
+   not directly to content containers. */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+.bg-grid-strong {
+  background-image:
+    linear-gradient(to right, var(--grid-line-strong) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line-strong) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+/* Fades a grid (or any layer) to transparent at its edges so it reads as
+   atmosphere rather than a tiled pattern with a hard boundary. */
+.fade-edges {
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 45%, transparent 90%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 45%, transparent 90%);
+}
+
+/* A 1px gradient rule — the restrained alternative to gradient-filled
+   paragraphs. Used under headings, as card dividers, etc. */
+.rule-gradient {
+  height: 2px;
+  border-radius: 999px;
+  background: var(--brand-gradient);
+}
+
+/* Card shell shared by selected-work and experiment cards: a soft
+   gradient-outline appears on hover/focus, plus an optional lift. */
+.lab-card {
+  position: relative;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.lab-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--brand-gradient);
+  opacity: 0;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.lab-card:hover::before,
+.lab-card:focus-visible::before {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lab-card {
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.18s ease,
+      box-shadow 0.25s ease;
+  }
+  .lab-card:hover,
+  .lab-card:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px -20px var(--glow-purple);
+  }
+}
+
+/* Polished container for sanitized product screenshots. */
+.glow-frame {
+  box-shadow:
+    0 0 0 1px var(--border-solid),
+    0 24px 60px -32px var(--glow-purple);
+}
+
+/* Small pill badge, e.g. "representative data", pinned to a corner. */
+.data-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-solid);
+  background: color-mix(in srgb, var(--background) 80%, transparent);
+  padding: 0.2rem 0.55rem;
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  backdrop-filter: blur(6px);
 }
 
 /* Larger, touch-friendly range sliders (easier to grab on mobile). */

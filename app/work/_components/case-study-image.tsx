@@ -26,9 +26,12 @@ export function CaseStudyImage({
         <button
           type="button"
           onClick={() => setExpanded(true)}
-          className="block w-full cursor-zoom-in overflow-hidden rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-2 transition-colors hover:bg-[var(--surface-hover)] sm:p-3"
+          className="glow-frame relative block w-full cursor-zoom-in overflow-hidden rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-2 transition-colors hover:bg-[var(--surface-hover)] sm:p-3"
           aria-label={`Expand image: ${alt}`}
         >
+          <span className="data-badge absolute left-4 top-4 z-10 sm:left-5 sm:top-5">
+            representative data
+          </span>
           <Image
             src={src}
             alt={alt}
