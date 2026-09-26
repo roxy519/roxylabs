@@ -68,6 +68,8 @@ export default function Home() {
         </div>
       </section>
 
+      <ExperimentsSection experiments={experiments} />
+
       {/* Selected work */}
       <section className="mt-16">
         <div className="mb-6 flex items-baseline justify-between">
@@ -88,8 +90,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-      <ExperimentsSection experiments={experiments} />
 
       {/* Footer */}
       <footer className="mt-20 border-t border-[var(--border-solid)] pt-6 text-xs text-muted">
