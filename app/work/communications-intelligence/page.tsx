@@ -15,11 +15,25 @@ export const metadata: Metadata = {
     description: OG_DESCRIPTION,
     url: "/work/communications-intelligence",
     type: "article",
+    images: [
+      {
+        url: "/roxylabs_communications_intelligence_og.png",
+        width: 1734,
+        height: 907,
+        alt: "Communications Intelligence — RoxyLabs case study",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: OG_TITLE,
     description: OG_DESCRIPTION,
+    images: [
+      {
+        url: "/roxylabs_communications_intelligence_og.png",
+        alt: "Communications Intelligence — RoxyLabs case study",
+      },
+    ],
   },
 };
 
