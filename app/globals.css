@@ -162,6 +162,37 @@ a {
     0 24px 60px -32px var(--glow-purple);
 }
 
+/* Front-page reveal used by the World Edition experiment. Keyed by content
+   so React remounts the node and the animation replays on each change. */
+@keyframes paper-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.paper-rise {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .paper-rise {
+    animation: paper-rise 0.4s ease;
+  }
+}
+
+/* Drop cap for a lead story's opening paragraph. */
+.drop-cap::first-letter {
+  font-weight: 700;
+  font-size: 2.6em;
+  float: left;
+  line-height: 0.8;
+  padding-right: 0.1em;
+  padding-top: 0.05em;
+}
+
 /* Small pill badge, e.g. "representative data", pinned to a corner. */
 .data-badge {
   display: inline-flex;

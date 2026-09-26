@@ -17,6 +17,7 @@ export type ExperimentVisual =
   | "gradient"
   | "link"
   | "credits"
+  | "news"
   | "generic";
 
 export type Experiment = {
@@ -82,13 +83,15 @@ export const experiments: Experiment[] = [
     visual: "credits",
   },
   {
-    slug: "coming-soon",
-    title: "Something else",
+    slug: "world-edition",
+    title: "World Edition",
     description:
-      "The next experiment lives here. Could be an AI toy, a tiny useful tool, or a weird idea that got out of hand.",
-    status: "idea",
+      "Browse front pages from newspapers around the world, or play Guess the City across 5 rounds — real outlets, sample headlines.",
+    status: "live",
     year: 2026,
-    tags: ["tbd"],
+    tags: ["game", "news", "geography"],
+    href: "/experiments/world-edition",
+    visual: "news",
   },
 ];
 

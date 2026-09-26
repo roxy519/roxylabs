@@ -10,6 +10,7 @@ import {
   GradientMotif,
   LinkMotif,
   CreditsMotif,
+  NewsMotif,
   GenericMotif,
 } from "@/app/components/motifs";
 import type { ComponentType } from "react";
@@ -72,6 +73,7 @@ const EXPERIMENT_MOTIFS: Record<ExperimentVisual, ComponentType<{ gradientId: st
   gradient: GradientMotif,
   link: LinkMotif,
   credits: CreditsMotif,
+  news: NewsMotif,
   generic: GenericMotif,
 };
 
