@@ -15,11 +15,25 @@ export const metadata: Metadata = {
     description: OG_DESCRIPTION,
     url: "/work",
     type: "website",
+    images: [
+      {
+        url: "/roxylabs_applied_ai_digital_transformation_og.png",
+        width: 1733,
+        height: 907,
+        alt: "Applied AI & Digital Transformation — RoxyLabs selected work",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: OG_TITLE,
     description: OG_DESCRIPTION,
+    images: [
+      {
+        url: "/roxylabs_applied_ai_digital_transformation_og.png",
+        alt: "Applied AI & Digital Transformation — RoxyLabs selected work",
+      },
+    ],
   },
 };
 

@@ -15,11 +15,25 @@ export const metadata: Metadata = {
     description: OG_DESCRIPTION,
     url: "/work/sms-optimization",
     type: "article",
+    images: [
+      {
+        url: "/roxylabs_sms_optimization_og.png",
+        width: 1734,
+        height: 907,
+        alt: "SMS Optimization — RoxyLabs case study",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: OG_TITLE,
     description: OG_DESCRIPTION,
+    images: [
+      {
+        url: "/roxylabs_sms_optimization_og.png",
+        alt: "SMS Optimization — RoxyLabs case study",
+      },
+    ],
   },
 };
 

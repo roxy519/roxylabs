@@ -1,7 +1,40 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { experiments, type Experiment } from "@/app/lib/experiments";
 import { caseStudies } from "@/app/lib/case-studies";
+
+const SITE_DESCRIPTION =
+  "Experiments and selected work in automation, marketing, operations, AI, and creative technology.";
+
+export const metadata: Metadata = {
+  openGraph: {
+    title: "roxylabs",
+    description: SITE_DESCRIPTION,
+    url: "/",
+    siteName: "roxylabs",
+    type: "website",
+    images: [
+      {
+        url: "/roxylabs_applied_ai_realworld_og.png",
+        width: 1733,
+        height: 907,
+        alt: "Applied AI for Real-World Impact — RoxyLabs",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "roxylabs",
+    description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: "/roxylabs_applied_ai_realworld_og.png",
+        alt: "Applied AI for Real-World Impact — RoxyLabs",
+      },
+    ],
+  },
+};
 
 const statusLabel: Record<Experiment["status"], string> = {
   live: "live",
