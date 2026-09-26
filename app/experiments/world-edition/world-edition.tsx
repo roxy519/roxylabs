@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Playfair_Display, PT_Serif } from "next/font/google";
 import { useEffect, useMemo, useState } from "react";
-import { CITIES, type City } from "./cities";
+import type { DisplayCity } from "./live";
 
 // Loaded only for the front-page component below — the rest of the page
 // stays in the site's regular monospace. This is what makes the "paper"
@@ -37,7 +37,7 @@ type GameState = {
 
 type LeaderboardEntry = { name: string; score: number; ts: number };
 
-function cityLabel(c: City): string {
+function cityLabel(c: DisplayCity): string {
   return `${c.city}, ${c.country}`;
 }
 
@@ -102,7 +102,7 @@ function FrontPage({
   today,
   issueNo,
 }: {
-  city: City;
+  city: DisplayCity;
   mystery?: boolean;
   today: string;
   issueNo: number;
@@ -128,7 +128,7 @@ function FrontPage({
           className="text-[2.1rem] font-black italic leading-none sm:text-[3rem]"
           style={headlineFont}
         >
-          {mystery ? "❓ Mystery Edition ❓" : city.paper}
+          {mystery ? "Mystery Edition" : city.paper}
         </h2>
         {mystery ? (
           <p className="mt-2 text-xs italic" style={{ color: INK_SOFT }}>
@@ -143,15 +143,23 @@ function FrontPage({
         )}
       </div>
 
-      {/* sub strip: city/country (hidden when mystery) + note */}
+      {/* sub strip: city/country (hidden when mystery) + live/sample note */}
       <div
-        className="flex items-center justify-between border-b py-1.5 text-[11px]"
+        className="flex flex-wrap items-center justify-between gap-1 border-b py-1.5 text-[11px]"
         style={{ borderColor: INK, color: INK_SOFT }}
       >
         <span className="font-bold" style={{ color: INK }}>
           {mystery ? "" : `${city.city.toUpperCase()}, ${city.country.toUpperCase()}`}
         </span>
-        <span>Sample headlines — not live content</span>
+        <span className="inline-flex items-center gap-1.5">
+          <span
+            className="inline-block h-1.5 w-1.5 rounded-full"
+            style={{ background: city.live ? "#2f7a3d" : "#a89f8d" }}
+          />
+          {city.live
+            ? "Live headlines — machine-translated"
+            : "Sample headlines — live fetch unavailable right now"}
+        </span>
       </div>
 
       {/* lead story — full width, on top */}
@@ -180,11 +188,24 @@ function FrontPage({
             {city.lead.byline}
           </p>
         )}
-        <div className="drop-cap mt-3 max-w-2xl space-y-3 text-[0.95rem] leading-relaxed">
-          {city.lead.body.map((p, i) => (
-            <p key={i}>{p}</p>
-          ))}
-        </div>
+        {city.lead.body && (
+          <div className="drop-cap mt-3 max-w-2xl space-y-3 text-[0.95rem] leading-relaxed">
+            {city.lead.body.map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+          </div>
+        )}
+        {!mystery && city.lead.link && (
+          <a
+            href={city.lead.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-block text-sm underline"
+            style={{ color: PAPER_RED }}
+          >
+            Read the full story at {city.paper} →
+          </a>
+        )}
       </div>
 
       {/* secondary stories — a row below the lead, columned like a broadsheet */}
@@ -201,11 +222,13 @@ function FrontPage({
             <h4 className="text-base font-bold leading-snug" style={headlineFont}>
               {s.headline}
             </h4>
-            <div className="mt-1.5 space-y-2 text-sm leading-relaxed" style={{ color: INK_SOFT }}>
-              {s.body.map((p, j) => (
-                <p key={j}>{p}</p>
-              ))}
-            </div>
+            {s.body && (
+              <div className="mt-1.5 space-y-2 text-sm leading-relaxed" style={{ color: INK_SOFT }}>
+                {s.body.map((p, j) => (
+                  <p key={j}>{p}</p>
+                ))}
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -224,7 +247,7 @@ function FrontPage({
   );
 }
 
-export default function WorldEdition() {
+export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
   const [mode, setMode] = useState<Mode>("browse");
 
   // Random-on-load city for Browse — starts deterministic (index 0) so
@@ -234,8 +257,8 @@ export default function WorldEdition() {
   useEffect(() => {
     // Random() must run client-only to match SSR's deterministic first paint.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setBrowseIndex(randomIndex(CITIES.length));
-  }, []);
+    setBrowseIndex(randomIndex(cities.length));
+  }, [cities.length]);
 
   // Today's date, for the front page's dateline — always the real "today,"
   // computed client-side only (server has no reliable local timezone/locale
@@ -254,10 +277,10 @@ export default function WorldEdition() {
 
   const sortedCities = useMemo(
     () =>
-      CITIES.map((c, i) => ({ i, label: cityLabel(c) })).sort((a, b) =>
+      cities.map((c, i) => ({ i, label: cityLabel(c) })).sort((a, b) =>
         a.label.localeCompare(b.label)
       ),
-    []
+    [cities]
   );
 
   const [game, setGame] = useState<GameState | null>(null);
@@ -276,8 +299,8 @@ export default function WorldEdition() {
   }, []);
 
   function startGame() {
-    const count = Math.min(ROUNDS_PER_GAME, CITIES.length);
-    const order = shuffle(CITIES.map((_, i) => i)).slice(0, count);
+    const count = Math.min(ROUNDS_PER_GAME, cities.length);
+    const order = shuffle(cities.map((_, i) => i)).slice(0, count);
     setGame({ order, roundIndex: 0, score: 0, answered: false, guess: "" });
     setGameOver(false);
     setSubmitted(false);
@@ -321,8 +344,9 @@ export default function WorldEdition() {
     setSubmitted(true);
   }
 
-  const roundCity = game ? CITIES[game.order[game.roundIndex]] : null;
+  const roundCity = game ? cities[game.order[game.roundIndex]] : null;
   const isLastRound = game ? game.roundIndex === game.order.length - 1 : false;
+  const liveCount = cities.filter((c) => c.live).length;
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-12">
@@ -338,8 +362,8 @@ export default function WorldEdition() {
         <span className="text-xs text-muted">experiment · game</span>
       </div>
       <p className="mt-2 max-w-xl text-sm text-muted">
-        Front pages from newspapers around the world — browse them, or play
-        Guess the City across 5 rounds.
+        Real, translated front-page headlines from newspapers around the
+        world — browse them, or play Guess the City across 5 rounds.
       </p>
 
       {/* Mode toggle */}
@@ -388,17 +412,17 @@ export default function WorldEdition() {
             </select>
             <button
               type="button"
-              onClick={() => setBrowseIndex((cur) => randomIndex(CITIES.length, cur))}
+              onClick={() => setBrowseIndex((cur) => randomIndex(cities.length, cur))}
               className={btnClass}
             >
               🎲 Random city
             </button>
             <span className="ml-auto text-xs text-muted">
-              {CITIES.length} of 100 cities in this demo
+              {cities.length} of 100 cities · {liveCount} live right now
             </span>
           </div>
 
-          <FrontPage city={CITIES[browseIndex]} today={today} issueNo={100 + browseIndex} />
+          <FrontPage city={cities[browseIndex]} today={today} issueNo={100 + browseIndex} />
         </div>
       )}
 
@@ -461,8 +485,8 @@ export default function WorldEdition() {
                   {parseInt(game.guess, 10) === game.order[game.roundIndex]
                     ? "✅ Correct! "
                     : "❌ Not quite — "}
-                  This was {CITIES[game.order[game.roundIndex]].paper} —{" "}
-                  {cityLabel(CITIES[game.order[game.roundIndex]])}.
+                  This was {cities[game.order[game.roundIndex]].paper} —{" "}
+                  {cityLabel(cities[game.order[game.roundIndex]])}.
                 </p>
                 <button
                   type="button"
@@ -535,26 +559,50 @@ export default function WorldEdition() {
 
       <div className="mt-8 rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-4 text-xs leading-relaxed text-muted">
         <p className="mb-2 font-semibold text-foreground">
-          How this front page is populated (and why it&rsquo;s not live yet)
+          How this front page is populated
         </p>
         <ul className="list-disc space-y-1.5 pl-4">
           <li>
-            <strong className="text-foreground">Masthead — already real.</strong>{" "}
-            Each city uses its actual most-read outlet (e.g. <em>The Guardian</em>{" "}
+            <strong className="text-foreground">Masthead — real.</strong> Each
+            city uses its actual most-read outlet (e.g. <em>The Guardian</em>{" "}
             for London, <em>The Yomiuri Shimbun</em> for Tokyo).
           </li>
           <li>
-            <strong className="text-foreground">Headlines and story text — placeholder.</strong>{" "}
-            The stories shown are sample text for layout only, not scraped or
-            translated from anything real. This is flagged on every front page.
+            <strong className="text-foreground">Headlines — real, when available.</strong>{" "}
+            Each city&rsquo;s lead and secondary headlines are that outlet&rsquo;s
+            actual current stories, pulled via Google News&rsquo; site-restricted
+            search and machine-translated to English. Only the headline and a
+            link back to the original are shown — never the article body — to
+            stay within fair-use norms for headline aggregation. Headlines
+            refresh at most once an hour.
           </li>
           <li>
-            <strong className="text-foreground">The plan:</strong> a small backend
-            would scrape each city&rsquo;s top headlines on a schedule, translate
-            non-English headlines/deks to English, and serve the result as JSON —
-            pulling headline, a short dek, byline, and a link back to the
-            original only, never full article text, to stay within fair-use
-            norms for headline aggregation.
+            <strong className="text-foreground">Translation is machine-translated,</strong>{" "}
+            not human-reviewed — expect the occasional awkward or imprecise
+            phrasing, especially for idioms.
+          </li>
+          <li>
+            <strong className="text-foreground">A best-effort filter</strong> drops
+            obviously explicit/tabloid results before they&rsquo;re shown. It
+            does <em>not</em> filter ordinary hard-news topics — crime, war,
+            political scandal — because that&rsquo;s what real front pages
+            actually carry. Real news is sometimes heavy; this shows it as-is
+            rather than sanitizing it.
+          </li>
+          <li>
+            <strong className="text-foreground">When a city shows &ldquo;Sample&rdquo;:</strong>{" "}
+            if a live fetch fails for that outlet — the feed is down, has no
+            recent items, or the request times out — that city falls back to
+            labeled placeholder text instead of breaking the page. The
+            live/sample status is shown on every front page.
+          </li>
+          <li>
+            <strong className="text-foreground">Honest caveat on the data source:</strong>{" "}
+            this uses Google News&rsquo; public RSS and Google Translate&rsquo;s
+            public web endpoint — both free, neither an official or licensed
+            API for this kind of use. They can rate-limit, change, or go down
+            without notice. A production version of this would run on a
+            licensed news/translation API instead.
           </li>
           <li>
             <strong className="text-foreground">Outlet mapping needs upkeep.</strong>{" "}

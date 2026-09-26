@@ -1,23 +1,28 @@
 // Sample data for the "World Edition" experiment.
 //
-// The masthead (paper name) for each city is real — its actual most-read
-// local outlet. Everything else (headlines, deks, bylines, body text) is
-// placeholder text written for layout only, not scraped or translated from
-// any real source. See the notes panel on the page itself for the full
-// explanation and the plan for wiring up real data.
+// The masthead (paper name + domain) for each city is real — its actual
+// most-read local outlet. The `lead`/`side` stories below are placeholder
+// text written for layout only — this is the *fallback* content, used when
+// a live headline can't be fetched for that city (see live.ts). See the
+// notes panel on the page itself for the full explanation.
 
 export type Story = {
   kicker?: string;
   headline: string;
   dek?: string;
   byline?: string;
-  body: string[];
+  /** Present only for placeholder stories — never fabricated for live ones. */
+  body?: string[];
+  /** Present only for live stories — links back to the original article. */
+  link?: string;
 };
 
 export type City = {
   city: string;
   country: string;
   paper: string;
+  /** The outlet's real domain — used to fetch its live headlines. */
+  domain: string;
   /** Only shown when non-empty — most outlets don't get an invented tagline. */
   tagline: string;
   lead: Story;
@@ -31,6 +36,7 @@ export const CITIES: City[] = [
     city: "New York",
     country: "USA",
     paper: "The New York Times",
+    domain: "nytimes.com",
     tagline: "All the News That's Fit to Print",
     lead: {
       kicker: "TRANSIT",
@@ -55,6 +61,7 @@ export const CITIES: City[] = [
     city: "London",
     country: "UK",
     paper: "The Guardian",
+    domain: "theguardian.com",
     tagline: "",
     lead: {
       kicker: "HOUSING",
@@ -79,6 +86,7 @@ export const CITIES: City[] = [
     city: "Tokyo",
     country: "Japan",
     paper: "The Yomiuri Shimbun",
+    domain: "yomiuri.co.jp",
     tagline: "",
     lead: {
       kicker: "ECONOMY",
@@ -103,6 +111,7 @@ export const CITIES: City[] = [
     city: "Paris",
     country: "France",
     paper: "Le Monde",
+    domain: "lemonde.fr",
     tagline: "",
     lead: {
       kicker: "CULTURE",
@@ -127,6 +136,7 @@ export const CITIES: City[] = [
     city: "Delhi",
     country: "India",
     paper: "The Times of India",
+    domain: "timesofindia.indiatimes.com",
     tagline: "",
     lead: {
       kicker: "INFRASTRUCTURE",
@@ -151,6 +161,7 @@ export const CITIES: City[] = [
     city: "São Paulo",
     country: "Brazil",
     paper: "Folha de S.Paulo",
+    domain: "folha.uol.com.br",
     tagline: "",
     lead: {
       kicker: "TRANSPORT",
@@ -175,6 +186,7 @@ export const CITIES: City[] = [
     city: "Lagos",
     country: "Nigeria",
     paper: "Punch",
+    domain: "punchng.com",
     tagline: "",
     lead: {
       kicker: "COMMERCE",
@@ -199,6 +211,7 @@ export const CITIES: City[] = [
     city: "Cairo",
     country: "Egypt",
     paper: "Al-Ahram",
+    domain: "ahram.org.eg",
     tagline: "",
     lead: {
       kicker: "HERITAGE",
@@ -223,6 +236,7 @@ export const CITIES: City[] = [
     city: "Moscow",
     country: "Russia",
     paper: "Komsomolskaya Pravda",
+    domain: "kp.ru",
     tagline: "",
     lead: {
       kicker: "ENERGY",
@@ -247,6 +261,7 @@ export const CITIES: City[] = [
     city: "Sydney",
     country: "Australia",
     paper: "The Sydney Morning Herald",
+    domain: "smh.com.au",
     tagline: "",
     lead: {
       kicker: "ENVIRONMENT",
@@ -271,6 +286,7 @@ export const CITIES: City[] = [
     city: "Mexico City",
     country: "Mexico",
     paper: "El Universal",
+    domain: "eluniversal.com.mx",
     tagline: "",
     lead: {
       kicker: "WATER",
@@ -295,6 +311,7 @@ export const CITIES: City[] = [
     city: "Seoul",
     country: "South Korea",
     paper: "The Chosun Ilbo",
+    domain: "chosun.com",
     tagline: "",
     lead: {
       kicker: "TECHNOLOGY",
@@ -319,6 +336,7 @@ export const CITIES: City[] = [
     city: "Jakarta",
     country: "Indonesia",
     paper: "Kompas",
+    domain: "kompas.com",
     tagline: "",
     lead: {
       kicker: "FLOODING",
@@ -343,6 +361,7 @@ export const CITIES: City[] = [
     city: "Istanbul",
     country: "Türkiye",
     paper: "Hürriyet",
+    domain: "hurriyet.com.tr",
     tagline: "",
     lead: {
       kicker: "TRANSPORT",
@@ -367,6 +386,7 @@ export const CITIES: City[] = [
     city: "Berlin",
     country: "Germany",
     paper: "Bild",
+    domain: "bild.de",
     tagline: "",
     lead: {
       kicker: "HOUSING",
@@ -391,6 +411,7 @@ export const CITIES: City[] = [
     city: "Toronto",
     country: "Canada",
     paper: "Toronto Star",
+    domain: "thestar.com",
     tagline: "",
     lead: {
       kicker: "HOUSING",
@@ -415,6 +436,7 @@ export const CITIES: City[] = [
     city: "Buenos Aires",
     country: "Argentina",
     paper: "Clarín",
+    domain: "clarin.com",
     tagline: "",
     lead: {
       kicker: "CULTURE",
@@ -439,6 +461,7 @@ export const CITIES: City[] = [
     city: "Bangkok",
     country: "Thailand",
     paper: "Thairath",
+    domain: "thairath.co.th",
     tagline: "",
     lead: {
       kicker: "TOURISM",
@@ -463,6 +486,7 @@ export const CITIES: City[] = [
     city: "Nairobi",
     country: "Kenya",
     paper: "Daily Nation",
+    domain: "nation.africa",
     tagline: "",
     lead: {
       kicker: "AGRICULTURE",
@@ -487,6 +511,7 @@ export const CITIES: City[] = [
     city: "Lima",
     country: "Peru",
     paper: "El Comercio",
+    domain: "elcomercio.pe",
     tagline: "",
     lead: {
       kicker: "FISHERIES",
