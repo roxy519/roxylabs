@@ -483,4 +483,28 @@ export const CITIES: City[] = [
     weather: "23°C, sunny",
     edition: "City Edition",
   },
+  {
+    city: "Lima",
+    country: "Peru",
+    paper: "El Comercio",
+    tagline: "",
+    lead: {
+      kicker: "FISHERIES",
+      headline: "Coastal authority tightens seasonal catch limits after stock survey",
+      dek: "Officials say early data points to a slow recovery in nearshore fish populations.",
+      byline: "By a Regional Affairs Writer",
+      body: [
+        "The revised limits apply to several nearshore species that surveyors found in lower numbers than expected this season, prompting a more cautious quota.",
+        "Fishing cooperatives said they support the goal but asked for clearer compensation during the adjustment period.",
+      ],
+    },
+    side: [
+      { headline: "Craft market vendors report strong weekend attendance", body: ["Organizers say cooler coastal weather has drawn larger-than-usual weekend crowds."] },
+      { headline: "City expands bus rapid transit hours on weekends", body: ["The extended schedule responds to steady weekend ridership growth."] },
+      { headline: "University opens new coastal ecology research center", body: ["The center will focus on monitoring nearshore marine health over the next decade."] },
+      { headline: "Municipality reports progress on seafront promenade renovation", body: ["Officials say roughly half of the planned renovation is now complete."] },
+    ],
+    weather: "19°C, overcast",
+    edition: "City Edition",
+  },
 ];

@@ -73,16 +73,6 @@ export const experiments: Experiment[] = [
     visual: "link",
   },
   {
-    slug: "sms-credit-calculator",
-    title: "SMS Credit Calculator — Public Version",
-    description:
-      "A standalone, public version of the credit-estimation capability behind a larger SMS optimization workspace.",
-    status: "building",
-    year: 2026,
-    tags: ["tool", "marketing", "sms"],
-    visual: "credits",
-  },
-  {
     slug: "world-edition",
     title: "World Edition",
     description:
@@ -92,6 +82,16 @@ export const experiments: Experiment[] = [
     tags: ["game", "news", "geography"],
     href: "/experiments/world-edition",
     visual: "news",
+  },
+  {
+    slug: "sms-credit-calculator",
+    title: "SMS Credit Calculator — Public Version",
+    description:
+      "A standalone, public version of the credit-estimation capability behind a larger SMS optimization workspace.",
+    status: "building",
+    year: 2026,
+    tags: ["tool", "marketing", "sms"],
+    visual: "credits",
   },
 ];
 

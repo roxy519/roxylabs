@@ -1,8 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { Playfair_Display, PT_Serif } from "next/font/google";
 import { useEffect, useMemo, useState } from "react";
 import { CITIES, type City } from "./cities";
+
+// Loaded only for the front-page component below — the rest of the page
+// stays in the site's regular monospace. This is what makes the "paper"
+// itself read as an actual newspaper rather than a roxylabs surface.
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["700", "900"],
+  style: ["normal", "italic"],
+  variable: "--font-playfair",
+});
+const ptSerif = PT_Serif({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-pt-serif",
+});
 
 const ROUNDS_PER_GAME = 5;
 const POINTS_PER_CORRECT = 100;
@@ -66,92 +83,143 @@ const inputClass =
 const btnClass =
   "rounded-xl border border-[var(--border-solid)] px-4 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-[var(--surface-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-1)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:cursor-not-allowed disabled:opacity-40";
 
-function FrontPage({ city, mystery = false }: { city: City; mystery?: boolean }) {
+const INK = "#1c1a16";
+const INK_SOFT = "#4a4640";
+const PAPER_RED = "#9c2b23";
+
+const headlineFont = { fontFamily: "var(--font-playfair), Georgia, serif" };
+const bodyFont = { fontFamily: "var(--font-pt-serif), Georgia, serif" };
+
+/**
+ * The "paper" itself — deliberately NOT roxylabs-styled. Cream stock, black
+ * ink, serif type, a classic broadsheet layout (masthead, then one full-width
+ * lead story, then a row of secondary stories below it) so it reads as an
+ * actual newspaper sitting inside the (still roxylabs-branded) page around it.
+ */
+function FrontPage({
+  city,
+  mystery = false,
+  today,
+  issueNo,
+}: {
+  city: City;
+  mystery?: boolean;
+  today: string;
+  issueNo: number;
+}) {
   return (
     <div
       key={mystery ? `mystery-${city.city}` : `browse-${city.city}`}
-      className="paper-rise glow-frame rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-5 sm:p-8"
+      className={`${playfair.variable} ${ptSerif.variable} paper-rise rounded-sm border p-5 shadow-2xl sm:p-8`}
+      style={{ background: "#f2ede1", color: INK, borderColor: "#d8cfb8", ...bodyFont }}
     >
-      {!mystery && (
-        <div className="flex justify-between border-b border-[var(--border-solid)] pb-2 text-xs text-muted">
-          <span>World Edition</span>
-          <span>Sample front page</span>
-        </div>
-      )}
+      {/* top strip: date + volume/edition */}
+      <div
+        className="flex flex-wrap justify-between gap-2 border-b pb-1.5 text-[11px] tracking-wide"
+        style={{ borderColor: INK, color: INK_SOFT }}
+      >
+        <span>{today || "…"}</span>
+        <span>{mystery ? "Guess the City" : `Vol. CLI · No. ${issueNo}`}</span>
+      </div>
 
-      <div className="py-4 text-center">
-        <h2 className="text-2xl font-bold sm:text-3xl">
+      {/* masthead */}
+      <div className="border-b-4 py-4 text-center" style={{ borderBottom: `4px double ${INK}` }}>
+        <h2
+          className="text-[2.1rem] font-black italic leading-none sm:text-[3rem]"
+          style={headlineFont}
+        >
           {mystery ? "❓ Mystery Edition ❓" : city.paper}
         </h2>
-        <div className="rule-gradient mx-auto mt-2 w-16" />
         {mystery ? (
-          <p className="mt-2 text-xs italic text-muted">
-            Read the clues — which city published this?
+          <p className="mt-2 text-xs italic" style={{ color: INK_SOFT }}>
+            Read the clues below — which city published this?
           </p>
         ) : (
           city.tagline && (
-            <p className="mt-2 text-xs italic text-muted">{city.tagline}</p>
+            <p className="mt-2 text-xs italic" style={{ color: INK_SOFT }}>
+              {city.tagline}
+            </p>
           )
         )}
       </div>
 
-      {!mystery && (
-        <div className="flex items-center justify-between border-y border-[var(--border-solid)] py-2 text-xs text-muted">
-          <span className="font-semibold text-foreground">
-            {city.city.toUpperCase()}, {city.country.toUpperCase()}
-          </span>
-          <span>Sample headlines — not live content</span>
-        </div>
-      )}
+      {/* sub strip: city/country (hidden when mystery) + note */}
+      <div
+        className="flex items-center justify-between border-b py-1.5 text-[11px]"
+        style={{ borderColor: INK, color: INK_SOFT }}
+      >
+        <span className="font-bold" style={{ color: INK }}>
+          {mystery ? "" : `${city.city.toUpperCase()}, ${city.country.toUpperCase()}`}
+        </span>
+        <span>Sample headlines — not live content</span>
+      </div>
 
-      <div className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-[1.6fr_1fr] sm:gap-8">
-        <div className="sm:border-r sm:border-[var(--border-solid)] sm:pr-8">
-          {city.lead.kicker && (
-            <div className="mb-1.5 text-xs font-bold tracking-wide text-[var(--color-magenta)]">
-              {city.lead.kicker}
-            </div>
-          )}
-          <h3 className="text-xl font-bold leading-tight sm:text-2xl">
-            {city.lead.headline}
-          </h3>
-          {city.lead.dek && (
-            <p className="mt-2 text-sm italic text-muted">{city.lead.dek}</p>
-          )}
-          {city.lead.byline && (
-            <p className="mt-2 text-xs text-muted">{city.lead.byline}</p>
-          )}
-          <div className="drop-cap mt-3 space-y-3 text-sm leading-relaxed text-foreground">
-            {city.lead.body.map((p, i) => (
-              <p key={i}>{p}</p>
-            ))}
+      {/* lead story — full width, on top */}
+      <div className="pt-4">
+        {city.lead.kicker && (
+          <div
+            className="mb-1.5 text-xs font-bold tracking-wide"
+            style={{ color: PAPER_RED }}
+          >
+            {city.lead.kicker}
           </div>
-        </div>
-
-        <div className="space-y-5">
-          {city.side.map((s, i) => (
-            <div
-              key={i}
-              className={i > 0 ? "border-t border-[var(--border-solid)] pt-5" : ""}
-            >
-              <h4 className="text-base font-bold leading-snug">{s.headline}</h4>
-              <div className="mt-1.5 space-y-2 text-sm leading-relaxed text-muted">
-                {s.body.map((p, j) => (
-                  <p key={j}>{p}</p>
-                ))}
-              </div>
-            </div>
+        )}
+        <h3
+          className="text-[1.6rem] font-black leading-[1.08] sm:text-[2.3rem]"
+          style={headlineFont}
+        >
+          {city.lead.headline}
+        </h3>
+        {city.lead.dek && (
+          <p className="mt-2 text-base italic" style={{ color: INK_SOFT }}>
+            {city.lead.dek}
+          </p>
+        )}
+        {city.lead.byline && (
+          <p className="mt-2 text-xs" style={{ color: INK_SOFT }}>
+            {city.lead.byline}
+          </p>
+        )}
+        <div className="drop-cap mt-3 max-w-2xl space-y-3 text-[0.95rem] leading-relaxed">
+          {city.lead.body.map((p, i) => (
+            <p key={i}>{p}</p>
           ))}
         </div>
       </div>
 
-      {!mystery && (
-        <div className="mt-5 flex flex-wrap justify-between gap-2 border-t border-[var(--border-solid)] pt-3 text-xs text-muted">
-          <span className="font-semibold text-foreground">
-            Weather: {city.weather}
-          </span>
-          <span>{city.edition}</span>
-        </div>
-      )}
+      {/* secondary stories — a row below the lead, columned like a broadsheet */}
+      <div
+        className="mt-5 grid grid-cols-1 gap-5 border-t pt-4 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-6"
+        style={{ borderColor: "#cdc4ab" }}
+      >
+        {city.side.map((s, i) => (
+          <div
+            key={i}
+            className="sm:border-l sm:pl-6 [&:nth-child(2n+1)]:sm:border-l-0 [&:nth-child(2n+1)]:sm:pl-0"
+            style={{ borderColor: "#cdc4ab" }}
+          >
+            <h4 className="text-base font-bold leading-snug" style={headlineFont}>
+              {s.headline}
+            </h4>
+            <div className="mt-1.5 space-y-2 text-sm leading-relaxed" style={{ color: INK_SOFT }}>
+              {s.body.map((p, j) => (
+                <p key={j}>{p}</p>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* bottom strip: weather + edition — shown even in mystery mode */}
+      <div
+        className="mt-5 flex flex-wrap justify-between gap-2 border-t pt-3 text-[11px]"
+        style={{ borderColor: INK, color: INK_SOFT }}
+      >
+        <span className="font-bold" style={{ color: INK }}>
+          Weather: {city.weather}
+        </span>
+        <span>{city.edition}</span>
+      </div>
     </div>
   );
 }
@@ -167,6 +235,21 @@ export default function WorldEdition() {
     // Random() must run client-only to match SSR's deterministic first paint.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setBrowseIndex(randomIndex(CITIES.length));
+  }, []);
+
+  // Today's date, for the front page's dateline — always the real "today,"
+  // computed client-side only (server has no reliable local timezone/locale
+  // to format against, so this must run after mount to avoid a mismatch).
+  const [today, setToday] = useState("");
+  useEffect(() => {
+    const dateStr = new Date().toLocaleDateString(undefined, {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setToday(dateStr);
   }, []);
 
   const sortedCities = useMemo(
@@ -315,13 +398,18 @@ export default function WorldEdition() {
             </span>
           </div>
 
-          <FrontPage city={CITIES[browseIndex]} />
+          <FrontPage city={CITIES[browseIndex]} today={today} issueNo={100 + browseIndex} />
         </div>
       )}
 
       {mode === "play" && game && (
         <div className="mt-6">
-          <FrontPage city={roundCity!} mystery />
+          <FrontPage
+            city={roundCity!}
+            mystery
+            today={today}
+            issueNo={100 + game.order[game.roundIndex]}
+          />
 
           <div className="mt-4 rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-5">
             <div className="flex justify-between text-sm font-semibold">
