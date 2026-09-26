@@ -23,6 +23,17 @@ export type City = {
   paper: string;
   /** The outlet's real domain — used to fetch its live headlines. */
   domain: string;
+  /** Google News locale for this city's OWN edition (not the visitor's) —
+   * without this, a `site:` search still gets ranked/localized for whoever
+   * is asking, which pulled foreign-desk stories instead of local ones. */
+  hl: string;
+  gl: string;
+  /** The outlet's own RSS feed, when it reliably has real per-item
+   * descriptions — used first (for a genuine one-sentence dek on the lead
+   * story) before falling back to the Google News method. Most outlets
+   * don't have one of these that actually works, so this is only set for a
+   * handful of cities. */
+  nativeFeedUrl?: string;
   /** Only shown when non-empty — most outlets don't get an invented tagline. */
   tagline: string;
   lead: Story;
@@ -37,6 +48,9 @@ export const CITIES: City[] = [
     country: "USA",
     paper: "The New York Times",
     domain: "nytimes.com",
+    nativeFeedUrl: "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
+    hl: "en-US",
+    gl: "US",
     tagline: "All the News That's Fit to Print",
     lead: {
       kicker: "TRANSIT",
@@ -62,6 +76,9 @@ export const CITIES: City[] = [
     country: "UK",
     paper: "The Guardian",
     domain: "theguardian.com",
+    nativeFeedUrl: "https://www.theguardian.com/uk/rss",
+    hl: "en-GB",
+    gl: "GB",
     tagline: "",
     lead: {
       kicker: "HOUSING",
@@ -87,6 +104,8 @@ export const CITIES: City[] = [
     country: "Japan",
     paper: "The Yomiuri Shimbun",
     domain: "yomiuri.co.jp",
+    hl: "ja",
+    gl: "JP",
     tagline: "",
     lead: {
       kicker: "ECONOMY",
@@ -112,6 +131,8 @@ export const CITIES: City[] = [
     country: "France",
     paper: "Le Monde",
     domain: "lemonde.fr",
+    hl: "fr",
+    gl: "FR",
     tagline: "",
     lead: {
       kicker: "CULTURE",
@@ -137,6 +158,8 @@ export const CITIES: City[] = [
     country: "India",
     paper: "The Times of India",
     domain: "timesofindia.indiatimes.com",
+    hl: "en-IN",
+    gl: "IN",
     tagline: "",
     lead: {
       kicker: "INFRASTRUCTURE",
@@ -162,6 +185,8 @@ export const CITIES: City[] = [
     country: "Brazil",
     paper: "Folha de S.Paulo",
     domain: "folha.uol.com.br",
+    hl: "pt-BR",
+    gl: "BR",
     tagline: "",
     lead: {
       kicker: "TRANSPORT",
@@ -187,6 +212,8 @@ export const CITIES: City[] = [
     country: "Nigeria",
     paper: "Punch",
     domain: "punchng.com",
+    hl: "en",
+    gl: "NG",
     tagline: "",
     lead: {
       kicker: "COMMERCE",
@@ -212,6 +239,8 @@ export const CITIES: City[] = [
     country: "Egypt",
     paper: "Al-Ahram",
     domain: "ahram.org.eg",
+    hl: "ar",
+    gl: "EG",
     tagline: "",
     lead: {
       kicker: "HERITAGE",
@@ -237,6 +266,9 @@ export const CITIES: City[] = [
     country: "Russia",
     paper: "Komsomolskaya Pravda",
     domain: "kp.ru",
+    nativeFeedUrl: "https://www.kp.ru/rss/allsections.xml",
+    hl: "ru",
+    gl: "RU",
     tagline: "",
     lead: {
       kicker: "ENERGY",
@@ -262,6 +294,8 @@ export const CITIES: City[] = [
     country: "Australia",
     paper: "The Sydney Morning Herald",
     domain: "smh.com.au",
+    hl: "en-AU",
+    gl: "AU",
     tagline: "",
     lead: {
       kicker: "ENVIRONMENT",
@@ -287,6 +321,8 @@ export const CITIES: City[] = [
     country: "Mexico",
     paper: "El Universal",
     domain: "eluniversal.com.mx",
+    hl: "es-419",
+    gl: "MX",
     tagline: "",
     lead: {
       kicker: "WATER",
@@ -312,6 +348,8 @@ export const CITIES: City[] = [
     country: "South Korea",
     paper: "The Chosun Ilbo",
     domain: "chosun.com",
+    hl: "ko",
+    gl: "KR",
     tagline: "",
     lead: {
       kicker: "TECHNOLOGY",
@@ -337,6 +375,8 @@ export const CITIES: City[] = [
     country: "Indonesia",
     paper: "Kompas",
     domain: "kompas.com",
+    hl: "id",
+    gl: "ID",
     tagline: "",
     lead: {
       kicker: "FLOODING",
@@ -362,6 +402,9 @@ export const CITIES: City[] = [
     country: "Türkiye",
     paper: "Hürriyet",
     domain: "hurriyet.com.tr",
+    nativeFeedUrl: "https://www.hurriyet.com.tr/rss/anasayfa",
+    hl: "tr",
+    gl: "TR",
     tagline: "",
     lead: {
       kicker: "TRANSPORT",
@@ -387,6 +430,8 @@ export const CITIES: City[] = [
     country: "Germany",
     paper: "Bild",
     domain: "bild.de",
+    hl: "de",
+    gl: "DE",
     tagline: "",
     lead: {
       kicker: "HOUSING",
@@ -412,6 +457,8 @@ export const CITIES: City[] = [
     country: "Canada",
     paper: "Toronto Star",
     domain: "thestar.com",
+    hl: "en-CA",
+    gl: "CA",
     tagline: "",
     lead: {
       kicker: "HOUSING",
@@ -437,6 +484,8 @@ export const CITIES: City[] = [
     country: "Argentina",
     paper: "Clarín",
     domain: "clarin.com",
+    hl: "es-419",
+    gl: "AR",
     tagline: "",
     lead: {
       kicker: "CULTURE",
@@ -462,6 +511,8 @@ export const CITIES: City[] = [
     country: "Thailand",
     paper: "Thairath",
     domain: "thairath.co.th",
+    hl: "th",
+    gl: "TH",
     tagline: "",
     lead: {
       kicker: "TOURISM",
@@ -487,6 +538,9 @@ export const CITIES: City[] = [
     country: "Kenya",
     paper: "Daily Nation",
     domain: "nation.africa",
+    nativeFeedUrl: "https://nation.africa/kenya/rss.xml",
+    hl: "en",
+    gl: "KE",
     tagline: "",
     lead: {
       kicker: "AGRICULTURE",
@@ -512,6 +566,8 @@ export const CITIES: City[] = [
     country: "Peru",
     paper: "El Comercio",
     domain: "elcomercio.pe",
+    hl: "es-419",
+    gl: "PE",
     tagline: "",
     lead: {
       kicker: "FISHERIES",

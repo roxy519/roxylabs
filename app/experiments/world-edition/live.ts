@@ -61,6 +61,44 @@ function parseRssItems(xml: string): { title: string; link: string }[] {
   return items;
 }
 
+function stripHtml(s: string): string {
+  return decodeEntities(s.replace(/<[^>]+>/g, " "))
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** First one or two sentences only — never the full body. */
+function firstSentences(text: string, max = 2): string {
+  const sentences = text.match(/[^.!?]+[.!?]+/g) ?? [text];
+  return sentences.slice(0, max).join(" ").trim();
+}
+
+/**
+ * A handful of outlets have their own reliable RSS feed with real per-item
+ * descriptions — used when available so the lead story gets a genuine
+ * one-or-two-sentence dek from the actual article, not just a headline.
+ * Most outlets don't have a feed this clean (some have none publicly, some
+ * return generic/empty descriptions), so this covers only a subset of
+ * cities; the rest fall back to the Google News method below, headline-only.
+ */
+function parseNativeRssItems(
+  xml: string
+): { title: string; link: string; description: string }[] {
+  const items: { title: string; link: string; description: string }[] = [];
+  const itemBlocks = xml.match(/<item>[\s\S]*?<\/item>/g) ?? [];
+  for (const block of itemBlocks) {
+    const titleMatch = block.match(/<title>([\s\S]*?)<\/title>/);
+    const linkMatch = block.match(/<link>([\s\S]*?)<\/link>/);
+    const descMatch = block.match(/<description>([\s\S]*?)<\/description>/);
+    if (!titleMatch || !linkMatch) continue;
+    const title = decodeEntities(stripCdata(titleMatch[1]).trim());
+    const link = decodeEntities(stripCdata(linkMatch[1]).trim());
+    const description = descMatch ? stripHtml(stripCdata(descMatch[1])) : "";
+    if (title && link) items.push({ title, link, description });
+  }
+  return items;
+}
+
 /**
  * Google News titles often trail off into breadcrumbs/attribution after
  * " - " (source name, section, taxonomy — e.g. "Headline - Foreign Affairs -
@@ -109,15 +147,66 @@ async function translateText(text: string, signal: AbortSignal): Promise<string>
     .trim() || text;
 }
 
-async function fetchCityLiveStory(
+async function fetchNativeLeadStory(
+  city: City
+): Promise<{ lead: Story; side: Story[]; fetchedAt: number } | null> {
+  if (!city.nativeFeedUrl) return null;
+  try {
+    const res = await fetch(city.nativeFeedUrl, {
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      next: { revalidate: REVALIDATE_SECONDS },
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; roxylabs-world-edition/1.0)" },
+    });
+    if (!res.ok) return null;
+
+    const xml = await res.text();
+    const items = parseNativeRssItems(xml).slice(0, STORIES_PER_CITY);
+    if (items.length === 0) return null;
+
+    const translated = await Promise.all(
+      items.map(async (item) => {
+        const headline = await translateText(item.title, AbortSignal.timeout(FETCH_TIMEOUT_MS));
+        const dek = item.description
+          ? await translateText(
+              firstSentences(item.description),
+              AbortSignal.timeout(FETCH_TIMEOUT_MS)
+            )
+          : undefined;
+        return { headline, dek, link: item.link };
+      })
+    );
+
+    const safe = translated.filter(
+      (t) => !SENSITIVE_PATTERN.test(t.headline) && !SENSITIVE_PATTERN.test(t.dek ?? "")
+    );
+    if (safe.length === 0) return null;
+
+    // Only the lead gets a dek — same convention the placeholder data uses.
+    const [lead, ...side] = safe.slice(0, STORIES_PER_CITY);
+    return {
+      lead,
+      side: side.map(({ headline, link }) => ({ headline, link })),
+      fetchedAt: Date.now(),
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function fetchViaGoogleNews(
   city: City
 ): Promise<{ lead: Story; side: Story[]; fetchedAt: number } | null> {
   try {
+    // Use the CITY's own edition/locale, not a fixed US/English one — Google
+    // News ranks and localizes `site:` results for whoever's asking, so a
+    // fixed US edition was pulling that outlet's foreign-desk US coverage
+    // instead of its actual local front page (e.g. clarin.com under a US
+    // edition surfaced Clarín's US-politics stories, not Buenos Aires news).
     const feedUrl = new URL("https://news.google.com/rss/search");
     feedUrl.searchParams.set("q", `site:${city.domain}`);
-    feedUrl.searchParams.set("hl", "en-US");
-    feedUrl.searchParams.set("gl", "US");
-    feedUrl.searchParams.set("ceid", "US:en");
+    feedUrl.searchParams.set("hl", city.hl);
+    feedUrl.searchParams.set("gl", city.gl);
+    feedUrl.searchParams.set("ceid", `${city.gl}:${city.hl}`);
 
     const rssRes = await fetch(feedUrl, {
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
@@ -157,6 +246,12 @@ async function fetchCityLiveStory(
   } catch {
     return null;
   }
+}
+
+async function fetchCityLiveStory(
+  city: City
+): Promise<{ lead: Story; side: Story[]; fetchedAt: number } | null> {
+  return (await fetchNativeLeadStory(city)) ?? (await fetchViaGoogleNews(city));
 }
 
 async function mapWithConcurrency<T, R>(

@@ -1,18 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { Playfair_Display, PT_Serif } from "next/font/google";
+import { Merriweather, PT_Serif } from "next/font/google";
 import { useEffect, useMemo, useState } from "react";
 import type { DisplayCity } from "./live";
 
 // Loaded only for the front-page component below — the rest of the page
 // stays in the site's regular monospace. This is what makes the "paper"
 // itself read as an actual newspaper rather than a roxylabs surface.
-const playfair = Playfair_Display({
+// Merriweather over a more decorative display serif (e.g. Playfair) —
+// newspaper-esque but designed for screen readability at body/headline sizes.
+const headlineTypeface = Merriweather({
   subsets: ["latin"],
   weight: ["700", "900"],
   style: ["normal", "italic"],
-  variable: "--font-playfair",
+  variable: "--font-headline",
 });
 const ptSerif = PT_Serif({
   subsets: ["latin"],
@@ -25,7 +27,7 @@ const ROUNDS_PER_GAME = 5;
 const POINTS_PER_CORRECT = 100;
 const LOCAL_LB_KEY = "worldEditionLeaderboard";
 
-type Mode = "browse" | "play";
+type Mode = "play" | "browse" | "method";
 
 type GameState = {
   order: number[];
@@ -87,8 +89,66 @@ const INK = "#1c1a16";
 const INK_SOFT = "#4a4640";
 const PAPER_RED = "#9c2b23";
 
-const headlineFont = { fontFamily: "var(--font-playfair), Georgia, serif" };
+const headlineFont = { fontFamily: "var(--font-headline), Georgia, serif" };
 const bodyFont = { fontFamily: "var(--font-pt-serif), Georgia, serif" };
+
+// Real headlines sometimes name the country outright (and occasionally the
+// city) — a dead giveaway in the guessing game. These are swapped for a
+// placeholder in mystery mode only; browse mode always shows the real text.
+const COUNTRY_ALIASES: Record<string, string[]> = {
+  USA: ["United States", "USA", "U.S.", "US", "America", "American"],
+  UK: ["United Kingdom", "Britain", "British", "UK"],
+  Japan: ["Japan", "Japanese"],
+  France: ["France", "French"],
+  India: ["India", "Indian"],
+  Brazil: ["Brazil", "Brazilian"],
+  Nigeria: ["Nigeria", "Nigerian"],
+  Egypt: ["Egypt", "Egyptian"],
+  Russia: ["Russia", "Russian"],
+  Australia: ["Australia", "Australian"],
+  Mexico: ["Mexico", "Mexican"],
+  "South Korea": ["South Korea", "Korea", "Korean"],
+  Indonesia: ["Indonesia", "Indonesian"],
+  Türkiye: ["Türkiye", "Turkey", "Turkish"],
+  Germany: ["Germany", "German"],
+  Canada: ["Canada", "Canadian"],
+  Argentina: ["Argentina", "Argentine", "Argentinian"],
+  Thailand: ["Thailand", "Thai"],
+  Kenya: ["Kenya", "Kenyan"],
+  Peru: ["Peru", "Peruvian"],
+};
+
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function stripDiacritics(s: string): string {
+  return s.normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
+// Not `\b...\b` — a plain word boundary fails at the end of tokens like
+// "U.S." (the trailing "." is already non-word, so there's no word/non-word
+// transition left for \b to match). Lookaround for "no adjacent letter or
+// digit" instead, which works regardless of what punctuation the alias itself
+// starts or ends with.
+function wholeTokenPattern(name: string): RegExp {
+  return new RegExp(`(?<![A-Za-z0-9])${escapeRegExp(name)}(?![A-Za-z0-9])`, "gi");
+}
+
+function redactIdentity(text: string, city: DisplayCity): string {
+  let out = text;
+  const cityNames = Array.from(
+    new Set([city.city, stripDiacritics(city.city)].filter(Boolean))
+  );
+  const countryNames = COUNTRY_ALIASES[city.country] ?? [city.country];
+  for (const name of cityNames) {
+    out = out.replace(wholeTokenPattern(name), "[City]");
+  }
+  for (const name of countryNames) {
+    out = out.replace(wholeTokenPattern(name), "[Country]");
+  }
+  return out;
+}
 
 /**
  * The "paper" itself — deliberately NOT roxylabs-styled. Cream stock, black
@@ -110,7 +170,7 @@ function FrontPage({
   return (
     <div
       key={mystery ? `mystery-${city.city}` : `browse-${city.city}`}
-      className={`${playfair.variable} ${ptSerif.variable} paper-rise rounded-sm border p-5 shadow-2xl sm:p-8`}
+      className={`${headlineTypeface.variable} ${ptSerif.variable} paper-rise rounded-sm border p-5 shadow-2xl sm:p-8`}
       style={{ background: "#f2ede1", color: INK, borderColor: "#d8cfb8", ...bodyFont }}
     >
       {/* top strip: date + volume/edition */}
@@ -125,7 +185,7 @@ function FrontPage({
       {/* masthead */}
       <div className="border-b-4 py-4 text-center" style={{ borderBottom: `4px double ${INK}` }}>
         <h2
-          className="text-[2.1rem] font-black italic leading-none sm:text-[3rem]"
+          className="text-[2.1rem] font-black leading-tight sm:text-[3rem]"
           style={headlineFont}
         >
           {mystery ? "Mystery Edition" : city.paper}
@@ -176,11 +236,11 @@ function FrontPage({
           className="text-[1.6rem] font-black leading-[1.08] sm:text-[2.3rem]"
           style={headlineFont}
         >
-          {city.lead.headline}
+          {mystery ? redactIdentity(city.lead.headline, city) : city.lead.headline}
         </h3>
         {city.lead.dek && (
           <p className="mt-2 text-base italic" style={{ color: INK_SOFT }}>
-            {city.lead.dek}
+            {mystery ? redactIdentity(city.lead.dek, city) : city.lead.dek}
           </p>
         )}
         {city.lead.byline && (
@@ -191,7 +251,7 @@ function FrontPage({
         {city.lead.body && (
           <div className="drop-cap mt-3 max-w-2xl space-y-3 text-[0.95rem] leading-relaxed">
             {city.lead.body.map((p, i) => (
-              <p key={i}>{p}</p>
+              <p key={i}>{mystery ? redactIdentity(p, city) : p}</p>
             ))}
           </div>
         )}
@@ -220,12 +280,12 @@ function FrontPage({
             style={{ borderColor: "#cdc4ab" }}
           >
             <h4 className="text-base font-bold leading-snug" style={headlineFont}>
-              {s.headline}
+              {mystery ? redactIdentity(s.headline, city) : s.headline}
             </h4>
             {s.body && (
               <div className="mt-1.5 space-y-2 text-sm leading-relaxed" style={{ color: INK_SOFT }}>
                 {s.body.map((p, j) => (
-                  <p key={j}>{p}</p>
+                  <p key={j}>{mystery ? redactIdentity(p, city) : p}</p>
                 ))}
               </div>
             )}
@@ -248,7 +308,7 @@ function FrontPage({
 }
 
 export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
-  const [mode, setMode] = useState<Mode>("browse");
+  const [mode, setMode] = useState<Mode>("play");
 
   // Random-on-load city for Browse — starts deterministic (index 0) so
   // server and client render the same markup, then randomizes client-side
@@ -312,6 +372,14 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
     if (next === "play" && !game) startGame();
   }
 
+  // Guess the City is the default tab, so the first round needs to be
+  // dealt on mount too, not just when switching into the tab later.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (!game) startGame();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function submitGuess() {
     if (!game || game.answered || game.guess === "") return;
     const guessIdx = parseInt(game.guess, 10);
@@ -370,6 +438,17 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
       <div className="mt-6 inline-flex gap-1 rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-1">
         <button
           type="button"
+          onClick={() => handleModeChange("play")}
+          className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
+            mode === "play"
+              ? "bg-[var(--surface-hover)] text-foreground"
+              : "text-muted hover:text-foreground"
+          }`}
+        >
+          🏙️ Guess the City
+        </button>
+        <button
+          type="button"
           onClick={() => handleModeChange("browse")}
           className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
             mode === "browse"
@@ -381,14 +460,14 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
         </button>
         <button
           type="button"
-          onClick={() => handleModeChange("play")}
+          onClick={() => handleModeChange("method")}
           className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
-            mode === "play"
+            mode === "method"
               ? "bg-[var(--surface-hover)] text-foreground"
               : "text-muted hover:text-foreground"
           }`}
         >
-          🎮 Guess the City
+          📖 Method
         </button>
       </div>
 
@@ -557,61 +636,82 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
         </div>
       )}
 
-      <div className="mt-8 rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-4 text-xs leading-relaxed text-muted">
-        <p className="mb-2 font-semibold text-foreground">
-          How this front page is populated
-        </p>
-        <ul className="list-disc space-y-1.5 pl-4">
-          <li>
-            <strong className="text-foreground">Masthead — real.</strong> Each
-            city uses its actual most-read outlet (e.g. <em>The Guardian</em>{" "}
-            for London, <em>The Yomiuri Shimbun</em> for Tokyo).
-          </li>
-          <li>
-            <strong className="text-foreground">Headlines — real, when available.</strong>{" "}
-            Each city&rsquo;s lead and secondary headlines are that outlet&rsquo;s
-            actual current stories, pulled via Google News&rsquo; site-restricted
-            search and machine-translated to English. Only the headline and a
-            link back to the original are shown — never the article body — to
-            stay within fair-use norms for headline aggregation. Headlines
-            refresh at most once an hour.
-          </li>
-          <li>
-            <strong className="text-foreground">Translation is machine-translated,</strong>{" "}
-            not human-reviewed — expect the occasional awkward or imprecise
-            phrasing, especially for idioms.
-          </li>
-          <li>
-            <strong className="text-foreground">A best-effort filter</strong> drops
-            obviously explicit/tabloid results before they&rsquo;re shown. It
-            does <em>not</em> filter ordinary hard-news topics — crime, war,
-            political scandal — because that&rsquo;s what real front pages
-            actually carry. Real news is sometimes heavy; this shows it as-is
-            rather than sanitizing it.
-          </li>
-          <li>
-            <strong className="text-foreground">When a city shows &ldquo;Sample&rdquo;:</strong>{" "}
-            if a live fetch fails for that outlet — the feed is down, has no
-            recent items, or the request times out — that city falls back to
-            labeled placeholder text instead of breaking the page. The
-            live/sample status is shown on every front page.
-          </li>
-          <li>
-            <strong className="text-foreground">Honest caveat on the data source:</strong>{" "}
-            this uses Google News&rsquo; public RSS and Google Translate&rsquo;s
-            public web endpoint — both free, neither an official or licensed
-            API for this kind of use. They can rate-limit, change, or go down
-            without notice. A production version of this would run on a
-            licensed news/translation API instead.
-          </li>
-          <li>
-            <strong className="text-foreground">Outlet mapping needs upkeep.</strong>{" "}
-            &ldquo;Most-read local paper&rdquo; shifts over time and is
-            sometimes genuinely ambiguous — treat this as a starting point, not
-            a fixed source of truth.
-          </li>
-        </ul>
-      </div>
+      {mode === "method" && (
+        <div className="mt-6 rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-4 text-xs leading-relaxed text-muted">
+          <p className="mb-2 font-semibold text-foreground">
+            How this front page is populated
+          </p>
+          <ul className="list-disc space-y-1.5 pl-4">
+            <li>
+              <strong className="text-foreground">Masthead — real.</strong>{" "}
+              Each city uses its actual most-read outlet (e.g.{" "}
+              <em>The Guardian</em> for London, <em>The Yomiuri Shimbun</em>{" "}
+              for Tokyo).
+            </li>
+            <li>
+              <strong className="text-foreground">Headlines — real, when available.</strong>{" "}
+              Each city&rsquo;s headlines are that outlet&rsquo;s actual
+              current stories in <em>that city&rsquo;s own edition/language</em>{" "}
+              (not a US/English lens on the outlet — that was pulling
+              foreign-desk stories rather than local ones), machine-translated
+              to English. Only the headline and a link back to the original
+              are shown — never the article body — to stay within fair-use
+              norms for headline aggregation. Refreshes at most once an hour.
+            </li>
+            <li>
+              <strong className="text-foreground">
+                A one-sentence dek appears on some lead stories,
+              </strong>{" "}
+              pulled from that outlet&rsquo;s own feed when it publishes a real
+              article summary (not all of them do) — this only covers a
+              handful of cities right now, the rest show headline and link
+              only.
+            </li>
+            <li>
+              <strong className="text-foreground">Translation is machine-translated,</strong>{" "}
+              not human-reviewed — expect the occasional awkward or imprecise
+              phrasing, especially for idioms.
+            </li>
+            <li>
+              <strong className="text-foreground">A best-effort filter</strong>{" "}
+              drops obviously explicit/tabloid results before they&rsquo;re
+              shown. It does <strong>not</strong>{" "}
+              filter ordinary hard-news topics — crime, war, political
+              scandal — because that&rsquo;s what real front pages actually
+              carry. Real news is sometimes heavy; this shows it as-is rather
+              than sanitizing it.
+            </li>
+            <li>
+              <strong className="text-foreground">
+                In Guess the City, any mention of the city or country
+              </strong>{" "}
+              is swapped for <code>[City]</code>/<code>[Country]</code> — the
+              headline is otherwise shown exactly as translated.
+            </li>
+            <li>
+              <strong className="text-foreground">When a city shows &ldquo;Sample&rdquo;:</strong>{" "}
+              if a live fetch fails for that outlet — the feed is down, has no
+              recent items, or the request times out — that city falls back to
+              labeled placeholder text instead of breaking the page. The
+              live/sample status is shown on every front page.
+            </li>
+            <li>
+              <strong className="text-foreground">Honest caveat on the data source:</strong>{" "}
+              this uses Google News&rsquo; public RSS and Google Translate&rsquo;s
+              public web endpoint — both free, neither an official or licensed
+              API for this kind of use. They can rate-limit, change, or go down
+              without notice. A production version of this would run on a
+              licensed news/translation API instead.
+            </li>
+            <li>
+              <strong className="text-foreground">Outlet mapping needs upkeep.</strong>{" "}
+              &ldquo;Most-read local paper&rdquo; shifts over time and is
+              sometimes genuinely ambiguous — treat this as a starting point, not
+              a fixed source of truth.
+            </li>
+          </ul>
+        </div>
+      )}
     </main>
   );
 }
