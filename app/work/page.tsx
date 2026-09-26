@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { caseStudies } from "@/app/lib/case-studies";
+import { CaseStudyCard } from "@/app/work/_components/case-study-card";
 
 const OG_TITLE = "Applied AI & Digital Transformation | RoxyLabs";
 const OG_DESCRIPTION =
@@ -52,6 +53,7 @@ export default function WorkPage() {
           Digital Transformation &amp; Applied AI
         </p>
         <h1 className="mt-2 text-2xl font-bold sm:text-3xl">Selected Work</h1>
+        <div className="rule-gradient mt-3 w-12" />
         <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
           Most organizations start with generative AI through isolated
           experiments — a piece of copy, a quick answer, a faster task. I&rsquo;ve
@@ -63,32 +65,7 @@ export default function WorkPage() {
       {/* Case studies */}
       <section className="mt-10 space-y-4">
         {caseStudies.map((study) => (
-          <Link
-            key={study.slug}
-            href={`/work/${study.slug}`}
-            className="group block rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-5 transition-colors hover:bg-[var(--surface-hover)]"
-          >
-            <div className="flex flex-wrap gap-1.5">
-              {study.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full border border-[var(--border-solid)] px-2 py-0.5 text-xs text-muted"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <h2 className="mt-3 text-lg font-semibold text-foreground">
-              {study.title}
-              <span className="ml-1 inline-block text-muted transition-transform group-hover:translate-x-0.5">
-                →
-              </span>
-            </h2>
-            <p className="mt-1 text-sm text-muted">{study.subtitle}</p>
-            <p className="mt-2 text-sm leading-relaxed text-muted">
-              {study.summary}
-            </p>
-          </Link>
+          <CaseStudyCard key={study.slug} study={study} variant="list" />
         ))}
       </section>
 

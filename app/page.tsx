@@ -1,8 +1,18 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { experiments, type Experiment } from "@/app/lib/experiments";
+import { experiments, type Experiment, type ExperimentVisual } from "@/app/lib/experiments";
 import { caseStudies } from "@/app/lib/case-studies";
+import { CaseStudyCard } from "@/app/work/_components/case-study-card";
+import {
+  HeroBackdrop,
+  EyeMotif,
+  GradientMotif,
+  LinkMotif,
+  CreditsMotif,
+  GenericMotif,
+} from "@/app/components/motifs";
+import type { ComponentType } from "react";
 
 const SITE_DESCRIPTION =
   "Experiments and selected work in automation, marketing, operations, AI, and creative technology.";
@@ -57,17 +67,28 @@ function StatusBadge({ status }: { status: Experiment["status"] }) {
   );
 }
 
+const EXPERIMENT_MOTIFS: Record<ExperimentVisual, ComponentType<{ gradientId: string }>> = {
+  eye: EyeMotif,
+  gradient: GradientMotif,
+  link: LinkMotif,
+  credits: CreditsMotif,
+  generic: GenericMotif,
+};
+
 function ExperimentCard({ experiment }: { experiment: Experiment }) {
-  const { title, description, status, year, tags, href, external } = experiment;
+  const { slug, title, description, status, year, tags, href, external, visual } = experiment;
+  const Motif = EXPERIMENT_MOTIFS[visual ?? "generic"];
 
   const inner = (
-    <div className="group flex h-full flex-col rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-5 transition-colors hover:bg-[var(--surface-hover)]">
-      <div className="mb-3 flex items-center justify-between">
+    <div className="lab-card group relative flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-5 transition-colors hover:bg-[var(--surface-hover)]">
+      <Motif gradientId={`exp-${slug}`} />
+
+      <div className="relative mb-3 flex items-center justify-between">
         <StatusBadge status={status} />
         <span className="text-xs text-muted">{year}</span>
       </div>
 
-      <h3 className="text-lg font-semibold text-foreground">
+      <h3 className="relative text-lg font-semibold text-foreground">
         {title}
         {href && (
           <span className="ml-1 inline-block text-muted transition-transform group-hover:translate-x-0.5">
@@ -76,11 +97,11 @@ function ExperimentCard({ experiment }: { experiment: Experiment }) {
         )}
       </h3>
 
-      <p className="mt-2 flex-1 text-sm leading-relaxed text-muted">
+      <p className="relative mt-2 flex-1 text-sm leading-relaxed text-muted">
         {description}
       </p>
 
-      <div className="mt-4 flex flex-wrap gap-1.5">
+      <div className="relative mt-4 flex flex-wrap gap-1.5">
         {tags.map((tag) => (
           <span
             key={tag}
@@ -108,23 +129,28 @@ export default function Home() {
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-16 sm:py-24">
       {/* Hero */}
-      <section className="flex flex-col items-center gap-6 text-center sm:flex-row sm:items-center sm:gap-8 sm:text-left">
-        <Image
-          src="/roxylabs-mark-gradient.png"
-          alt="roxylabs"
-          width={104}
-          height={104}
-          priority
-          className="shrink-0"
-        />
-        <div>
-          <h1 className="text-4xl font-bold sm:text-5xl">
-            <span className="brand-text">roxylabs</span>
-          </h1>
-          <p className="mt-3 max-w-xl text-base text-muted sm:text-lg">
-            experiments and selected work in automation, marketing,
-            operations, AI, and creative technology.
-          </p>
+      <section className="relative isolate overflow-hidden py-6 sm:py-10">
+        <HeroBackdrop gradientId="hero" />
+
+        <div className="relative flex flex-col items-center gap-6 text-center sm:flex-row sm:items-center sm:gap-8 sm:text-left">
+          <Image
+            src="/roxylabs-mark-gradient.png"
+            alt="roxylabs"
+            width={104}
+            height={104}
+            priority
+            className="shrink-0"
+          />
+          <div>
+            <h1 className="text-4xl font-bold sm:text-5xl">
+              <span className="brand-text">roxylabs</span>
+            </h1>
+            <div className="rule-gradient mt-3 mx-auto w-16 sm:mx-0" />
+            <p className="mt-3 max-w-xl text-base text-muted sm:text-lg">
+              experiments and selected work in automation, marketing,
+              operations, AI, and creative technology.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -144,31 +170,7 @@ export default function Home() {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {caseStudies.map((study) => (
-            <Link
-              key={study.slug}
-              href={`/work/${study.slug}`}
-              className="group flex flex-col rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-5 transition-colors hover:bg-[var(--surface-hover)]"
-            >
-              <div className="flex flex-wrap gap-1.5">
-                {study.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full border border-[var(--border-solid)] px-2 py-0.5 text-xs text-muted"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <h3 className="mt-3 text-lg font-semibold text-foreground">
-                {study.title}
-                <span className="ml-1 inline-block text-muted transition-transform group-hover:translate-x-0.5">
-                  →
-                </span>
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted">
-                {study.summary}
-              </p>
-            </Link>
+            <CaseStudyCard key={study.slug} study={study} variant="grid" />
           ))}
         </div>
       </section>

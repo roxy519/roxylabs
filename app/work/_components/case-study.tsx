@@ -30,7 +30,8 @@ export function CaseStudyShell({
           {eyebrow}
         </p>
         <h1 className="mt-2 text-2xl font-bold sm:text-3xl">{title}</h1>
-        <div className="mt-3 flex flex-wrap gap-1.5">
+        <div className="rule-gradient mt-3 w-12" />
+        <div className="mt-4 flex flex-wrap gap-1.5">
           {tags.map((tag) => (
             <span
               key={tag}
@@ -44,7 +45,11 @@ export function CaseStudyShell({
 
       <div className="mt-10 space-y-10">{children}</div>
 
-      <div className="mt-12 rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-4 text-xs leading-relaxed text-muted">
+      <div className="relative mt-12 overflow-hidden rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-4 pl-5 text-xs leading-relaxed text-muted">
+        <div
+          className="absolute inset-y-0 left-0 w-[3px]"
+          style={{ background: "var(--brand-gradient)" }}
+        />
         Portfolio version uses representative data and recreated visuals.
         Proprietary company information has been removed.
       </div>
