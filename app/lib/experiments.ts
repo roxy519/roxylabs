@@ -17,6 +17,7 @@ export type ExperimentVisual =
   | "gradient"
   | "link"
   | "credits"
+  | "news"
   | "generic";
 
 export type Experiment = {
@@ -45,7 +46,7 @@ export const experiments: Experiment[] = [
     description: "Five rounds of visual instinct.",
     status: "live",
     year: 2026,
-    tags: ["game", "fun"],
+    tags: ["game", "design"],
     href: "/by-eye",
     visual: "eye",
   },
@@ -72,6 +73,17 @@ export const experiments: Experiment[] = [
     visual: "link",
   },
   {
+    slug: "world-edition",
+    title: "World Edition",
+    description:
+      "Browse front pages from newspapers around the world, or play Guess the City across 5 rounds — real outlets, sample headlines.",
+    status: "live",
+    year: 2026,
+    tags: ["game", "news", "geography"],
+    href: "/experiments/world-edition",
+    visual: "news",
+  },
+  {
     slug: "sms-credit-calculator",
     title: "SMS Credit Calculator — Public Version",
     description:
@@ -80,15 +92,6 @@ export const experiments: Experiment[] = [
     year: 2026,
     tags: ["tool", "marketing", "sms"],
     visual: "credits",
-  },
-  {
-    slug: "coming-soon",
-    title: "Something else",
-    description:
-      "The next experiment lives here. Could be an AI toy, a tiny useful tool, or a weird idea that got out of hand.",
-    status: "idea",
-    year: 2026,
-    tags: ["tbd"],
   },
 ];
 

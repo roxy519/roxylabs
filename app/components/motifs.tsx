@@ -233,6 +233,29 @@ export function CreditsMotif({ gradientId }: { gradientId: string }) {
   );
 }
 
+/** World Edition: a mini front page — masthead bar over column rules. */
+export function NewsMotif({ gradientId }: { gradientId: string }) {
+  return (
+    <svg
+      aria-hidden
+      className="absolute -bottom-2 -right-2 h-20 w-24 opacity-[0.18] transition-opacity duration-300 group-hover:opacity-32"
+      viewBox="0 0 120 96"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <BrandDefs id={gradientId} />
+      <rect x="10" y="10" width="100" height="76" rx="4" stroke={`url(#${gradientId})`} strokeWidth="1.5" />
+      <line x1="10" y1="30" x2="110" y2="30" stroke="var(--color-purple)" strokeWidth="1.5" strokeOpacity="0.7" />
+      <line x1="60" y1="30" x2="60" y2="86" stroke="var(--color-cyan)" strokeWidth="1.5" strokeOpacity="0.5" />
+      <line x1="18" y1="42" x2="52" y2="42" stroke="var(--color-magenta)" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.75" />
+      <line x1="18" y1="52" x2="52" y2="52" stroke="var(--muted)" strokeWidth="1.5" strokeOpacity="0.5" />
+      <line x1="18" y1="60" x2="46" y2="60" stroke="var(--muted)" strokeWidth="1.5" strokeOpacity="0.5" />
+      <line x1="68" y1="42" x2="102" y2="42" stroke="var(--muted)" strokeWidth="1.5" strokeOpacity="0.5" />
+      <line x1="68" y1="52" x2="102" y2="52" stroke="var(--muted)" strokeWidth="1.5" strokeOpacity="0.5" />
+    </svg>
+  );
+}
+
 /** Fallback for idea-stage experiments: a loose, unconnected dot cluster. */
 export function GenericMotif({ gradientId }: { gradientId: string }) {
   return (
