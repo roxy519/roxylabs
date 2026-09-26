@@ -183,9 +183,9 @@ function FrontPage({
       </div>
 
       {/* masthead */}
-      <div className="border-b-4 py-4 text-center" style={{ borderBottom: `4px double ${INK}` }}>
+      <div className="border-b-4 py-2 text-center" style={{ borderBottom: `4px double ${INK}` }}>
         <h2
-          className="text-[2.1rem] font-black leading-tight sm:text-[3rem]"
+          className="text-[1.6rem] font-black italic leading-tight sm:text-[2.2rem]"
           style={headlineFont}
         >
           {mystery ? "Mystery Edition" : city.paper}

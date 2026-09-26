@@ -51,6 +51,17 @@ export const experiments: Experiment[] = [
     visual: "eye",
   },
   {
+    slug: "world-edition",
+    title: "World Edition",
+    description:
+      "Browse front pages from newspapers around the world, or play Guess the City across 5 rounds — real outlets, sample headlines.",
+    status: "live",
+    year: 2026,
+    tags: ["game", "news", "geography"],
+    href: "/experiments/world-edition",
+    visual: "news",
+  },
+  {
     slug: "gradients",
     title: "Gradient Studio",
     description:
@@ -71,17 +82,6 @@ export const experiments: Experiment[] = [
     tags: ["tool", "marketing", "ops"],
     href: "/experiments/utm-builder",
     visual: "link",
-  },
-  {
-    slug: "world-edition",
-    title: "World Edition",
-    description:
-      "Browse front pages from newspapers around the world, or play Guess the City across 5 rounds — real outlets, sample headlines.",
-    status: "live",
-    year: 2026,
-    tags: ["game", "news", "geography"],
-    href: "/experiments/world-edition",
-    visual: "news",
   },
   {
     slug: "sms-credit-calculator",
