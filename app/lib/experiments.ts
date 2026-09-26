@@ -46,7 +46,7 @@ export const experiments: Experiment[] = [
     description: "Five rounds of visual instinct.",
     status: "live",
     year: 2026,
-    tags: ["game", "fun"],
+    tags: ["game", "design"],
     href: "/by-eye",
     visual: "eye",
   },
