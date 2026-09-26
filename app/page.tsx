@@ -1,19 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { experiments, type Experiment, type ExperimentVisual } from "@/app/lib/experiments";
+import { experiments } from "@/app/lib/experiments";
 import { caseStudies } from "@/app/lib/case-studies";
 import { CaseStudyCard } from "@/app/work/_components/case-study-card";
-import {
-  HeroBackdrop,
-  EyeMotif,
-  GradientMotif,
-  LinkMotif,
-  CreditsMotif,
-  NewsMotif,
-  GenericMotif,
-} from "@/app/components/motifs";
-import type { ComponentType } from "react";
+import { HeroBackdrop } from "@/app/components/motifs";
+import { ExperimentsSection } from "@/app/components/experiments-section";
 
 const SITE_DESCRIPTION =
   "Experiments and selected work in automation, marketing, operations, AI, and creative technology.";
@@ -46,86 +38,6 @@ export const metadata: Metadata = {
     ],
   },
 };
-
-const statusLabel: Record<Experiment["status"], string> = {
-  live: "live",
-  building: "building",
-  idea: "idea",
-};
-
-function StatusBadge({ status }: { status: Experiment["status"] }) {
-  const dot =
-    status === "live"
-      ? "bg-emerald-400"
-      : status === "building"
-        ? "bg-amber-400"
-        : "bg-neutral-500";
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-muted">
-      <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
-      {statusLabel[status]}
-    </span>
-  );
-}
-
-const EXPERIMENT_MOTIFS: Record<ExperimentVisual, ComponentType<{ gradientId: string }>> = {
-  eye: EyeMotif,
-  gradient: GradientMotif,
-  link: LinkMotif,
-  credits: CreditsMotif,
-  news: NewsMotif,
-  generic: GenericMotif,
-};
-
-function ExperimentCard({ experiment }: { experiment: Experiment }) {
-  const { slug, title, description, status, year, tags, href, external, visual } = experiment;
-  const Motif = EXPERIMENT_MOTIFS[visual ?? "generic"];
-
-  const inner = (
-    <div className="lab-card group relative flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-5 transition-colors hover:bg-[var(--surface-hover)]">
-      <Motif gradientId={`exp-${slug}`} />
-
-      <div className="relative mb-3 flex items-center justify-between">
-        <StatusBadge status={status} />
-        <span className="text-xs text-muted">{year}</span>
-      </div>
-
-      <h3 className="relative text-lg font-semibold text-foreground">
-        {title}
-        {href && (
-          <span className="ml-1 inline-block text-muted transition-transform group-hover:translate-x-0.5">
-            {external ? "↗" : "→"}
-          </span>
-        )}
-      </h3>
-
-      <p className="relative mt-2 flex-1 text-sm leading-relaxed text-muted">
-        {description}
-      </p>
-
-      <div className="relative mt-4 flex flex-wrap gap-1.5">
-        {tags.map((tag) => (
-          <span
-            key={tag}
-            className="rounded-full border border-[var(--border-solid)] px-2 py-0.5 text-xs text-muted"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-
-  if (!href) return inner;
-
-  return external ? (
-    <a href={href} target="_blank" rel="noopener noreferrer">
-      {inner}
-    </a>
-  ) : (
-    <Link href={href}>{inner}</Link>
-  );
-}
 
 export default function Home() {
   return (
@@ -177,23 +89,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Experiments */}
-      <section className="mt-16">
-        <div className="mb-6 flex items-baseline justify-between">
-          <h2 className="text-sm uppercase tracking-widest text-muted">
-            experiments
-          </h2>
-          <span className="text-xs text-muted">
-            {experiments.length} in the lab
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {experiments.map((experiment) => (
-            <ExperimentCard key={experiment.slug} experiment={experiment} />
-          ))}
-        </div>
-      </section>
+      <ExperimentsSection experiments={experiments} />
 
       {/* Footer */}
       <footer className="mt-20 border-t border-[var(--border-solid)] pt-6 text-xs text-muted">
@@ -202,7 +98,7 @@ export default function Home() {
           <span>built in public · always experimenting | <a href="https://roxycreates.com" target="_blank" style={{ color: '#ebebeb' }} rel="noopener noreferrer" className="text-primary hover:underline">
             old site/creative work &#8594;
           </a> | <a href="https://www.linkedin.com/in/rbischoff/" target="_blank" style={{ color: '#ebebeb' }} rel="noopener noreferrer" className="text-primary hover:underline">
-            LinkedIn ↗
+            linkedin ↗
           </a></span>
         </div>
       </footer>

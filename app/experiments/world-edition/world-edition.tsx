@@ -439,10 +439,11 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
         <button
           type="button"
           onClick={() => handleModeChange("play")}
-          className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
+          aria-pressed={mode === "play"}
+          className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${
             mode === "play"
-              ? "bg-[var(--surface-hover)] text-foreground"
-              : "text-muted hover:text-foreground"
+              ? "bg-[var(--brand-1)] text-white"
+              : "text-muted hover:bg-[var(--surface-hover)] hover:text-foreground"
           }`}
         >
           🏙️ Guess the City
@@ -450,10 +451,11 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
         <button
           type="button"
           onClick={() => handleModeChange("browse")}
-          className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
+          aria-pressed={mode === "browse"}
+          className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${
             mode === "browse"
-              ? "bg-[var(--surface-hover)] text-foreground"
-              : "text-muted hover:text-foreground"
+              ? "bg-[var(--brand-1)] text-white"
+              : "text-muted hover:bg-[var(--surface-hover)] hover:text-foreground"
           }`}
         >
           📰 Browse
@@ -461,14 +463,24 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
         <button
           type="button"
           onClick={() => handleModeChange("method")}
-          className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
+          aria-pressed={mode === "method"}
+          className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${
             mode === "method"
-              ? "bg-[var(--surface-hover)] text-foreground"
-              : "text-muted hover:text-foreground"
+              ? "bg-[var(--brand-1)] text-white"
+              : "text-muted hover:bg-[var(--surface-hover)] hover:text-foreground"
           }`}
         >
           📖 Method
         </button>
+      </div>
+
+      {/* Current-tab label — the pill above can be subtle at a glance, this
+          spells it out so it's never ambiguous which view is active. */}
+      <div className="mt-4 flex items-center gap-2 text-xs uppercase tracking-widest text-muted">
+        <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: "var(--brand-1)" }} />
+        {mode === "play" && "Guess the City — round-based game"}
+        {mode === "browse" && "Browse — pick any edition"}
+        {mode === "method" && "Method — how this is built"}
       </div>
 
       {mode === "browse" && (
