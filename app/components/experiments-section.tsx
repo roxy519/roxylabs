@@ -80,7 +80,7 @@ function ExperimentCard({
   activeTag: string | null;
   onTagSelect: (tag: string) => void;
 }) {
-  const { slug, title, description, status, year, tags, href, external, visual } = experiment;
+  const { slug, title, description, status, year, tags, href, external, visual, beta } = experiment;
   const Motif = EXPERIMENT_MOTIFS[visual ?? "generic"];
 
   const inner = (
@@ -94,6 +94,11 @@ function ExperimentCard({
 
       <h3 className="relative text-lg font-semibold text-foreground">
         {title}
+        {beta && (
+          <span className="ml-2 rounded-full border border-[var(--brand-1)] px-1.5 py-0.5 align-middle text-[10px] font-semibold uppercase tracking-wide text-[var(--brand-1)]">
+            beta
+          </span>
+        )}
         {href && (
           <span className="ml-1 inline-block text-muted transition-transform group-hover:translate-x-0.5">
             {external ? "↗" : "→"}
