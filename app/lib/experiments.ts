@@ -37,6 +37,8 @@ export type Experiment = {
   external?: boolean;
   /** Small watermark motif for the card. Defaults to "generic". */
   visual?: ExperimentVisual;
+  /** Shows a small "beta" badge next to the title. */
+  beta?: boolean;
 };
 
 export const experiments: Experiment[] = [
@@ -60,6 +62,7 @@ export const experiments: Experiment[] = [
     tags: ["game", "news", "geography"],
     href: "/experiments/world-edition",
     visual: "news",
+    beta: true,
   },
   {
     slug: "gradients",

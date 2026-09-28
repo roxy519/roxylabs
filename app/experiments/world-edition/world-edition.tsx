@@ -426,7 +426,12 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
       </Link>
 
       <div className="mt-6 flex items-baseline justify-between">
-        <h1 className="text-2xl font-bold sm:text-3xl">World Edition</h1>
+        <h1 className="text-2xl font-bold sm:text-3xl">
+          World Edition
+          <span className="ml-2 rounded-full border border-[var(--brand-1)] px-1.5 py-0.5 align-middle text-[10px] font-semibold uppercase tracking-wide text-[var(--brand-1)]">
+            beta
+          </span>
+        </h1>
         <span className="text-xs text-muted">experiment · game</span>
       </div>
       <p className="mt-2 max-w-xl text-sm text-muted">
