@@ -126,7 +126,17 @@ function cleanHeadline(rawTitle: string): string | null {
   return first;
 }
 
-async function translateText(text: string, signal: AbortSignal): Promise<string> {
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+// If Google starts blocking us (HTTP 429 / "automated queries" page), every
+// remaining city would otherwise wait out its own retries in turn. Once the
+// retries are exhausted, trip a short breaker so the rest fail immediately and
+// fall back to their labeled sample content instead of stalling the page.
+let translateBlockedUntil = 0;
+const TRANSLATE_BREAKER_MS = 5 * 60 * 1000;
+
+async function translateText(text: string): Promise<string> {
+  if (Date.now() < translateBlockedUntil) throw new Error("translate blocked");
   const url = new URL("https://translate.googleapis.com/translate_a/single");
   url.searchParams.set("client", "gtx");
   url.searchParams.set("sl", "auto");
@@ -134,8 +144,19 @@ async function translateText(text: string, signal: AbortSignal): Promise<string>
   url.searchParams.set("dt", "t");
   url.searchParams.set("q", text);
 
-  const res = await fetch(url, { signal, next: { revalidate: REVALIDATE_SECONDS } });
-  if (!res.ok) throw new Error(`translate ${res.status}`);
+  // The unofficial endpoint rate-limits bursts with HTTP 429 — back off and
+  // retry rather than failing the whole city on one throttled call.
+  let res: Response | null = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    res = await fetch(url, {
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      next: { revalidate: REVALIDATE_SECONDS },
+    });
+    if (res.status !== 429) break;
+    if (attempt === 0) await sleep(800);
+  }
+  if (res?.status === 429) translateBlockedUntil = Date.now() + TRANSLATE_BREAKER_MS;
+  if (!res || !res.ok) throw new Error(`translate ${res?.status}`);
   const data = (await res.json()) as unknown;
 
   // Response shape: [[[translatedChunk, originalChunk, ...], ...], ...]
@@ -146,6 +167,28 @@ async function translateText(text: string, signal: AbortSignal): Promise<string>
     .join("")
     .trim() || text;
 }
+
+/**
+ * Translates several short texts in ONE request (newline-separated) instead
+ * of one request each — a city's worth of headlines is a single call, which
+ * keeps the whole page well under the endpoint's rate limit. Falls back to
+ * one-at-a-time only if the line count doesn't survive the round trip.
+ */
+async function translateMany(texts: string[], needsTranslation: boolean): Promise<string[]> {
+  if (!needsTranslation || texts.length === 0) return texts;
+  const clean = texts.map((t) => t.replace(/\s*\n\s*/g, " ").trim());
+  const out = await translateText(clean.join("\n"));
+  const lines = out.split("\n").map((l) => l.trim());
+  if (lines.length === clean.length) return lines;
+  const nonEmpty = lines.filter(Boolean);
+  if (nonEmpty.length === clean.length) return nonEmpty;
+  const results: string[] = [];
+  for (const t of clean) results.push(await translateText(t));
+  return results;
+}
+
+/** English-language outlets don't need translating at all. */
+const needsTranslation = (city: City) => !city.hl.toLowerCase().startsWith("en");
 
 async function fetchNativeLeadStory(
   city: City
@@ -163,18 +206,25 @@ async function fetchNativeLeadStory(
     const items = parseNativeRssItems(xml).slice(0, STORIES_PER_CITY);
     if (items.length === 0) return null;
 
-    const translated = await Promise.all(
-      items.map(async (item) => {
-        const headline = await translateText(item.title, AbortSignal.timeout(FETCH_TIMEOUT_MS));
-        const dek = item.description
-          ? await translateText(
-              firstSentences(item.description),
-              AbortSignal.timeout(FETCH_TIMEOUT_MS)
-            )
-          : undefined;
-        return { headline, dek, link: item.link };
-      })
+    // One batched request: every headline, plus the dek for the first few
+    // items (only a lead gets a dek, but the first may get filtered out).
+    const DEK_CANDIDATES = 3;
+    const deksIn = items
+      .slice(0, DEK_CANDIDATES)
+      .map((item) => (item.description ? firstSentences(item.description) : ""));
+    const deksPresent = deksIn.map((d, i) => ({ d, i })).filter((x) => x.d);
+    const out = await translateMany(
+      [...items.map((i) => i.title), ...deksPresent.map((x) => x.d)],
+      needsTranslation(city)
     );
+    const headlines = out.slice(0, items.length);
+    const deks = new Map<number, string>();
+    deksPresent.forEach((x, k) => deks.set(x.i, out[items.length + k]));
+    const translated = items.map((item, i) => ({
+      headline: headlines[i],
+      dek: deks.get(i),
+      link: item.link,
+    }));
 
     const safe = translated.filter(
       (t) => !SENSITIVE_PATTERN.test(t.headline) && !SENSITIVE_PATTERN.test(t.dek ?? "")
@@ -223,18 +273,17 @@ async function fetchViaGoogleNews(
     const candidates = rawItems
       .map((item) => ({ title: cleanHeadline(item.title), link: item.link }))
       .filter((item): item is { title: string; link: string } => item.title !== null)
-      .slice(0, STORIES_PER_CITY * 2);
+      .slice(0, STORIES_PER_CITY + 3);
     if (candidates.length === 0) return null;
 
-    const translated = await Promise.all(
-      candidates.map(async (item) => {
-        const headline = await translateText(
-          item.title,
-          AbortSignal.timeout(FETCH_TIMEOUT_MS)
-        );
-        return { headline, link: item.link };
-      })
+    const headlines = await translateMany(
+      candidates.map((c) => c.title),
+      needsTranslation(city)
     );
+    const translated = candidates.map((item, i) => ({
+      headline: headlines[i],
+      link: item.link,
+    }));
 
     // Filtered on the translated (English) text so this catches explicit
     // content regardless of the source language.
