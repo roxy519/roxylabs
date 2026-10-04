@@ -24,8 +24,13 @@ const ptSerif = PT_Serif({
 });
 
 const ROUNDS_PER_GAME = 5;
-const POINTS_PER_CORRECT = 100;
-const LOCAL_LB_KEY = "worldEditionLeaderboard";
+const MAX_POINTS_PER_ROUND = 100;
+// Points fall off exponentially with distance: a perfect guess is 100, and
+// roughly every 1,500 miles off cuts the score by about two thirds.
+const DISTANCE_SCALE_MILES = 1500;
+// v2: scores became distance-based, so they aren't comparable to the old
+// all-or-nothing 100s — separate key keeps the leaderboard fair.
+const LOCAL_LB_KEY = "worldEditionLeaderboard-v2";
 
 type Mode = "play" | "browse" | "method";
 
@@ -35,12 +40,32 @@ type GameState = {
   score: number;
   answered: boolean;
   guess: string;
+  /** Result of the current round, set once answered. */
+  roundMiles: number | null;
+  roundPoints: number | null;
 };
 
 type LeaderboardEntry = { name: string; score: number; ts: number };
 
-function cityLabel(c: DisplayCity): string {
-  return `${c.city}, ${c.country}`;
+// Country first — people tend to be thinking "which country is this?"
+// before they think of the city, and it makes the dropdown scannable.
+function placeLabel(c: DisplayCity): string {
+  return `${c.country} — ${c.city}`;
+}
+
+function distanceMiles(a: DisplayCity, b: DisplayCity): number {
+  const R = 3958.8;
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+
+function pointsForDistance(miles: number): number {
+  return Math.round(MAX_POINTS_PER_ROUND * Math.exp(-miles / DISTANCE_SCALE_MILES));
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -337,7 +362,7 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
 
   const sortedCities = useMemo(
     () =>
-      cities.map((c, i) => ({ i, label: cityLabel(c) })).sort((a, b) =>
+      cities.map((c, i) => ({ i, label: placeLabel(c) })).sort((a, b) =>
         a.label.localeCompare(b.label)
       ),
     [cities]
@@ -358,10 +383,27 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
     setLeaderboard(getLocalBoard());
   }, []);
 
+  // Only cities with live headlines are used as mystery editions — a sample
+  // (placeholder) front page would be a meaningless puzzle. All cities stay in
+  // the guess list, so which ones are in play isn't given away.
+  const liveIndices = useMemo(
+    () => cities.flatMap((c, i) => (c.live ? [i] : [])),
+    [cities]
+  );
+
   function startGame() {
-    const count = Math.min(ROUNDS_PER_GAME, cities.length);
-    const order = shuffle(cities.map((_, i) => i)).slice(0, count);
-    setGame({ order, roundIndex: 0, score: 0, answered: false, guess: "" });
+    if (liveIndices.length === 0) return;
+    const count = Math.min(ROUNDS_PER_GAME, liveIndices.length);
+    const order = shuffle(liveIndices).slice(0, count);
+    setGame({
+      order,
+      roundIndex: 0,
+      score: 0,
+      answered: false,
+      guess: "",
+      roundMiles: null,
+      roundPoints: null,
+    });
     setGameOver(false);
     setSubmitted(false);
     setPlayerName("");
@@ -382,19 +424,30 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
 
   function submitGuess() {
     if (!game || game.answered || game.guess === "") return;
-    const guessIdx = parseInt(game.guess, 10);
-    const correct = guessIdx === game.order[game.roundIndex];
+    const guessed = cities[parseInt(game.guess, 10)];
+    const actual = cities[game.order[game.roundIndex]];
+    const miles = guessed === actual ? 0 : distanceMiles(guessed, actual);
+    const points = pointsForDistance(miles);
     setGame({
       ...game,
       answered: true,
-      score: game.score + (correct ? POINTS_PER_CORRECT : 0),
+      roundMiles: miles,
+      roundPoints: points,
+      score: game.score + points,
     });
   }
 
   function advanceRound() {
     if (!game) return;
     if (game.roundIndex < game.order.length - 1) {
-      setGame({ ...game, roundIndex: game.roundIndex + 1, answered: false, guess: "" });
+      setGame({
+        ...game,
+        roundIndex: game.roundIndex + 1,
+        answered: false,
+        guess: "",
+        roundMiles: null,
+        roundPoints: null,
+      });
     } else {
       setGameOver(true);
     }
@@ -435,8 +488,9 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
         <span className="text-xs text-muted">experiment · game</span>
       </div>
       <p className="mt-2 max-w-xl text-sm text-muted">
-        Real, translated front-page headlines from newspapers around the
-        world — browse them, or play Guess the City across 5 rounds.
+        Today&rsquo;s real front-page headlines from newspapers around the
+        world, translated into English. Guess where a paper is from, or
+        browse any city&rsquo;s front page.
       </p>
 
       {/* Mode toggle */}
@@ -479,13 +533,48 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
         </button>
       </div>
 
-      {/* Current-tab label — the pill above can be subtle at a glance, this
-          spells it out so it's never ambiguous which view is active. */}
-      <div className="mt-4 flex items-center gap-2 text-xs uppercase tracking-widest text-muted">
-        <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: "var(--brand-1)" }} />
-        {mode === "play" && "Guess the City — round-based game"}
-        {mode === "browse" && "Browse — pick any edition"}
-        {mode === "method" && "Method — how this is built"}
+      {/* Per-tab instructions — spells out what the active view is and what
+          to do in it, so nobody has to guess the rules. */}
+      <div className="mt-4 rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-4 text-sm leading-relaxed">
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-foreground">
+          <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: "var(--brand-1)" }} />
+          {mode === "play" && "How to play"}
+          {mode === "browse" && "Browse"}
+          {mode === "method" && "Method"}
+        </div>
+        {mode === "play" && (
+          <ol className="mt-2 list-decimal space-y-1 pl-5 text-muted">
+            <li>
+              Read the mystery front page below — real headlines from a
+              newspaper in one city. Names of the city and country are hidden
+              as <span className="text-foreground">[City]</span> and{" "}
+              <span className="text-foreground">[Country]</span>.
+            </li>
+            <li>
+              Pick the <span className="text-foreground">country and city</span>{" "}
+              you think it&rsquo;s from, then hit Guess.
+            </li>
+            <li>
+              Closer guesses score more: up to{" "}
+              <span className="text-foreground">{MAX_POINTS_PER_ROUND} points</span>{" "}
+              for the exact city, shrinking the farther off you are (measured
+              in miles). 5 rounds, {ROUNDS_PER_GAME * MAX_POINTS_PER_ROUND}{" "}
+              points max.
+            </li>
+          </ol>
+        )}
+        {mode === "browse" && (
+          <p className="mt-2 text-muted">
+            Pick any city from the dropdown — or roll the dice — to read its
+            front page, newspaper name and all.
+          </p>
+        )}
+        {mode === "method" && (
+          <p className="mt-2 text-muted">
+            Where the headlines come from, how they&rsquo;re translated, and
+            how guesses are scored.
+          </p>
+        )}
       </div>
 
       {mode === "browse" && (
@@ -498,7 +587,7 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
               value={browseIndex}
               onChange={(e) => setBrowseIndex(parseInt(e.target.value, 10))}
               className={`${inputClass} max-w-xs`}
-              aria-label="Choose a city"
+              aria-label="Choose a country and city"
             >
               {sortedCities.map(({ i, label }) => (
                 <option key={i} value={i}>
@@ -519,6 +608,14 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
           </div>
 
           <FrontPage city={cities[browseIndex]} today={today} issueNo={100 + browseIndex} />
+        </div>
+      )}
+
+      {mode === "play" && liveIndices.length === 0 && (
+        <div className="mt-6 rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-5 text-sm text-muted">
+          Live headlines couldn&rsquo;t be loaded for any city right now, so
+          there&rsquo;s nothing to guess. The game only uses real headlines —
+          check back in a bit, or try Browse.
         </div>
       )}
 
@@ -545,10 +642,10 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
                   value={game.guess}
                   onChange={(e) => setGame({ ...game, guess: e.target.value })}
                   className={`${inputClass} flex-1`}
-                  aria-label="Guess the city"
+                  aria-label="Guess the country and city"
                 >
                   <option value="" disabled>
-                    Choose a city…
+                    Choose a country — city…
                   </option>
                   {sortedCities.map(({ i, label }) => (
                     <option key={i} value={i}>
@@ -567,23 +664,30 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
               </div>
             )}
 
-            {game.answered && !gameOver && (
+            {game.answered && !gameOver && game.roundPoints !== null && game.roundMiles !== null && (
               <>
                 <p
                   className="mt-4 text-sm leading-relaxed"
                   style={{
                     color:
-                      parseInt(game.guess, 10) === game.order[game.roundIndex]
+                      game.roundPoints >= 60
                         ? "#34d399"
-                        : "var(--color-magenta)",
+                        : game.roundPoints >= 25
+                          ? "#fbbf24"
+                          : "var(--color-magenta)",
                   }}
                 >
-                  {parseInt(game.guess, 10) === game.order[game.roundIndex]
-                    ? "✅ Correct! "
-                    : "❌ Not quite — "}
-                  This was {cities[game.order[game.roundIndex]].paper} —{" "}
-                  {cityLabel(cities[game.order[game.roundIndex]])}.
+                  {game.roundMiles === 0
+                    ? `✅ Spot on! +${game.roundPoints} points. `
+                    : `📍 ${Math.round(game.roundMiles).toLocaleString("en-US")} miles off — +${game.roundPoints} points. `}
+                  This was {cities[game.order[game.roundIndex]].paper} (
+                  {placeLabel(cities[game.order[game.roundIndex]])}).
                 </p>
+                {game.roundMiles !== 0 && (
+                  <p className="mt-1 text-xs text-muted">
+                    You guessed {placeLabel(cities[parseInt(game.guess, 10)])}.
+                  </p>
+                )}
                 <button
                   type="button"
                   onClick={advanceRound}
@@ -597,7 +701,7 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
             {gameOver && (
               <div className="mt-4">
                 <h2 className="text-lg font-bold">
-                  Final score: {game.score} / {game.order.length * POINTS_PER_CORRECT}
+                  Final score: {game.score} / {game.order.length * MAX_POINTS_PER_ROUND}
                 </h2>
                 {!submitted ? (
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -704,6 +808,21 @@ export default function WorldEdition({ cities }: { cities: DisplayCity[] }) {
               </strong>{" "}
               is swapped for <code>[City]</code>/<code>[Country]</code> — the
               headline is otherwise shown exactly as translated.
+            </li>
+            <li>
+              <strong className="text-foreground">Scoring is by distance.</strong>{" "}
+              Each round is worth up to {MAX_POINTS_PER_ROUND} points: the
+              great-circle distance in miles between your guess and the real
+              city is run through an exponential falloff (about{" "}
+              {DISTANCE_SCALE_MILES.toLocaleString("en-US")} miles off cuts
+              the score by roughly two thirds), so a near miss like Berlin
+              for Paris still earns most of the points.
+            </li>
+            <li>
+              <strong className="text-foreground">The game only uses live headlines.</strong>{" "}
+              If a city&rsquo;s live fetch fails it isn&rsquo;t dealt as a
+              mystery edition (it&rsquo;s still in the guess list, so
+              that doesn&rsquo;t give anything away).
             </li>
             <li>
               <strong className="text-foreground">When a city shows &ldquo;Sample&rdquo;:</strong>{" "}

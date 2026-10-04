@@ -20,6 +20,9 @@ export type Story = {
 export type City = {
   city: string;
   country: string;
+  /** City center — used to score guesses by distance in the game. */
+  lat: number;
+  lng: number;
   paper: string;
   /** The outlet's real domain — used to fetch its live headlines. */
   domain: string;
@@ -46,6 +49,8 @@ export const CITIES: City[] = [
   {
     city: "New York",
     country: "USA",
+    lat: 40.7128,
+    lng: -74.006,
     paper: "The New York Times",
     domain: "nytimes.com",
     nativeFeedUrl: "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
@@ -74,6 +79,8 @@ export const CITIES: City[] = [
   {
     city: "London",
     country: "UK",
+    lat: 51.5074,
+    lng: -0.1278,
     paper: "The Guardian",
     domain: "theguardian.com",
     nativeFeedUrl: "https://www.theguardian.com/uk/rss",
@@ -102,6 +109,8 @@ export const CITIES: City[] = [
   {
     city: "Tokyo",
     country: "Japan",
+    lat: 35.6762,
+    lng: 139.6503,
     paper: "The Yomiuri Shimbun",
     domain: "yomiuri.co.jp",
     hl: "ja",
@@ -129,6 +138,8 @@ export const CITIES: City[] = [
   {
     city: "Paris",
     country: "France",
+    lat: 48.8566,
+    lng: 2.3522,
     paper: "Le Monde",
     domain: "lemonde.fr",
     hl: "fr",
@@ -156,6 +167,8 @@ export const CITIES: City[] = [
   {
     city: "Delhi",
     country: "India",
+    lat: 28.6139,
+    lng: 77.209,
     paper: "The Times of India",
     domain: "timesofindia.indiatimes.com",
     hl: "en-IN",
@@ -183,6 +196,8 @@ export const CITIES: City[] = [
   {
     city: "São Paulo",
     country: "Brazil",
+    lat: -23.5505,
+    lng: -46.6333,
     paper: "Folha de S.Paulo",
     domain: "folha.uol.com.br",
     hl: "pt-BR",
@@ -210,6 +225,8 @@ export const CITIES: City[] = [
   {
     city: "Lagos",
     country: "Nigeria",
+    lat: 6.5244,
+    lng: 3.3792,
     paper: "Punch",
     domain: "punchng.com",
     hl: "en",
@@ -237,6 +254,8 @@ export const CITIES: City[] = [
   {
     city: "Cairo",
     country: "Egypt",
+    lat: 30.0444,
+    lng: 31.2357,
     paper: "Al-Ahram",
     domain: "ahram.org.eg",
     hl: "ar",
@@ -264,6 +283,8 @@ export const CITIES: City[] = [
   {
     city: "Moscow",
     country: "Russia",
+    lat: 55.7558,
+    lng: 37.6173,
     paper: "Komsomolskaya Pravda",
     domain: "kp.ru",
     nativeFeedUrl: "https://www.kp.ru/rss/allsections.xml",
@@ -292,6 +313,8 @@ export const CITIES: City[] = [
   {
     city: "Sydney",
     country: "Australia",
+    lat: -33.8688,
+    lng: 151.2093,
     paper: "The Sydney Morning Herald",
     domain: "smh.com.au",
     hl: "en-AU",
@@ -319,6 +342,8 @@ export const CITIES: City[] = [
   {
     city: "Mexico City",
     country: "Mexico",
+    lat: 19.4326,
+    lng: -99.1332,
     paper: "El Universal",
     domain: "eluniversal.com.mx",
     hl: "es-419",
@@ -346,6 +371,8 @@ export const CITIES: City[] = [
   {
     city: "Seoul",
     country: "South Korea",
+    lat: 37.5665,
+    lng: 126.978,
     paper: "The Chosun Ilbo",
     domain: "chosun.com",
     hl: "ko",
@@ -373,6 +400,8 @@ export const CITIES: City[] = [
   {
     city: "Jakarta",
     country: "Indonesia",
+    lat: -6.2088,
+    lng: 106.8456,
     paper: "Kompas",
     domain: "kompas.com",
     hl: "id",
@@ -400,6 +429,8 @@ export const CITIES: City[] = [
   {
     city: "Istanbul",
     country: "Türkiye",
+    lat: 41.0082,
+    lng: 28.9784,
     paper: "Hürriyet",
     domain: "hurriyet.com.tr",
     nativeFeedUrl: "https://www.hurriyet.com.tr/rss/anasayfa",
@@ -428,6 +459,8 @@ export const CITIES: City[] = [
   {
     city: "Berlin",
     country: "Germany",
+    lat: 52.52,
+    lng: 13.405,
     paper: "Bild",
     domain: "bild.de",
     hl: "de",
@@ -455,6 +488,8 @@ export const CITIES: City[] = [
   {
     city: "Toronto",
     country: "Canada",
+    lat: 43.6532,
+    lng: -79.3832,
     paper: "Toronto Star",
     domain: "thestar.com",
     hl: "en-CA",
@@ -482,6 +517,8 @@ export const CITIES: City[] = [
   {
     city: "Buenos Aires",
     country: "Argentina",
+    lat: -34.6037,
+    lng: -58.3816,
     paper: "Clarín",
     domain: "clarin.com",
     hl: "es-419",
@@ -509,6 +546,8 @@ export const CITIES: City[] = [
   {
     city: "Bangkok",
     country: "Thailand",
+    lat: 13.7563,
+    lng: 100.5018,
     paper: "Thairath",
     domain: "thairath.co.th",
     hl: "th",
@@ -536,6 +575,8 @@ export const CITIES: City[] = [
   {
     city: "Nairobi",
     country: "Kenya",
+    lat: -1.2921,
+    lng: 36.8219,
     paper: "Daily Nation",
     domain: "nation.africa",
     nativeFeedUrl: "https://nation.africa/kenya/rss.xml",
@@ -564,6 +605,8 @@ export const CITIES: City[] = [
   {
     city: "Lima",
     country: "Peru",
+    lat: -12.0464,
+    lng: -77.0428,
     paper: "El Comercio",
     domain: "elcomercio.pe",
     hl: "es-419",
