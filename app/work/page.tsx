@@ -2,18 +2,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { caseStudies } from "@/app/lib/case-studies";
 import { CaseStudyCard } from "@/app/work/_components/case-study-card";
+import { MethodSteps } from "@/app/work/_components/method-steps";
 
-const OG_TITLE = "Applied AI & Digital Transformation | RoxyLabs";
-const OG_DESCRIPTION =
-  "Selected work exploring how AI, automation, and digital tools can solve real customer experience and marketing operations problems.";
+const PAGE_TITLE = "Applied AI & Innovation | Roxy Bischoff";
+const PAGE_DESCRIPTION =
+  "Selected work in applied AI, automation, experimentation, operational innovation, and transformation—from problem discovery and analysis through prototyping, decision support, and implementation planning.";
 
 export const metadata: Metadata = {
-  title: "Applied AI & Digital Transformation",
-  description:
-    "Digital transformation & applied AI — sanitized case studies from building AI-enabled tools for real business problems.",
+  title: { absolute: PAGE_TITLE },
+  description: PAGE_DESCRIPTION,
   openGraph: {
-    title: OG_TITLE,
-    description: OG_DESCRIPTION,
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
     url: "/work",
     type: "website",
     images: [
@@ -27,8 +27,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: OG_TITLE,
-    description: OG_DESCRIPTION,
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
     images: [
       {
         url: "/roxylabs_applied_ai_digital_transformation_og.png",
@@ -50,23 +50,76 @@ export default function WorkPage() {
 
       <div className="mt-6">
         <p className="text-xs uppercase tracking-widest text-muted">
-          Digital Transformation &amp; Applied AI
+          Applied AI &amp; Innovation
         </p>
         <h1 className="mt-2 text-2xl font-bold sm:text-3xl">Selected Work</h1>
         <div className="rule-gradient mt-3 w-12" />
-        <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
-          Most organizations start with generative AI through isolated
-          experiments — a piece of copy, a quick answer, a faster task. I&rsquo;ve
-          been focused on a different question: how does AI become part of
-          the actual operating system of a marketing organization?
-        </p>
+        <div className="mt-3 max-w-xl space-y-3 text-sm leading-relaxed text-muted">
+          <p>
+            Most organizations start with generative AI through isolated
+            experiments — a piece of copy, a quick answer, a faster task.
+            I&rsquo;m interested in a different question: how do AI,
+            automation, data, and emerging technology become part of how an
+            organization actually works?
+          </p>
+          <p>
+            I start with the problem, not the technology: friction, repeated
+            decisions, fragmented information, workflows that take too much
+            manual effort. Then I investigate, work out where technology can
+            genuinely help, prototype something practical, and learn from
+            what holds up.
+          </p>
+        </div>
       </div>
 
       {/* Case studies */}
-      <section className="mt-10 space-y-4">
+      <section className="mt-10">
+        <h2 className="mb-3 text-sm uppercase tracking-widest text-muted">
+          case studies
+        </h2>
+        <div className="space-y-4">
         {caseStudies.map((study) => (
           <CaseStudyCard key={study.slug} study={study} variant="list" />
         ))}
+        </div>
+      </section>
+
+      {/* Methodology */}
+      <section className="mt-12">
+        <h2 className="text-sm uppercase tracking-widest text-muted">
+          how I work
+        </h2>
+        <p className="mt-3 max-w-xl text-sm leading-relaxed text-foreground">
+          I don&rsquo;t start by asking where AI can be inserted. I start by
+          understanding the problem, then determine whether AI, automation,
+          data, or a simpler solution is actually useful.
+        </p>
+        <MethodSteps />
+      </section>
+
+      {/* AI enablement */}
+      <section className="mt-12">
+        <h2 className="text-sm uppercase tracking-widest text-muted">
+          AI Enablement &amp; Adoption
+        </h2>
+        <div className="mt-3 space-y-3 text-sm leading-relaxed text-foreground">
+          <p>
+            I&rsquo;m Director, Digital Operations within Tours Digital
+            Solutions (TDS), a primarily engineering organization. Separately,
+            I serve as the AI Ambassador for EF&rsquo;s Marketing
+            organization.
+          </p>
+          <p>
+            The role puts me at the intersection of business needs and
+            emerging technology: helping surface useful applications for AI,
+            supporting experimentation and adoption, and helping teams
+            understand where AI can meaningfully improve how they work.
+          </p>
+          <p className="text-muted">
+            This work is ongoing, and I&rsquo;ll add examples and learnings as
+            the program develops.
+          </p>
+        </div>
       </section>
 
       {/* Connecting the dots */}
@@ -111,12 +164,45 @@ export default function WorkPage() {
             together to solve the problem.
           </p>
           <p>
-            Across these initiatives, my role spans problem identification,
-            solution design, hands-on AI-assisted prototyping and
-            development, workflow design, stakeholder collaboration, and
-            planning how individual capabilities evolve into more scalable
-            systems.
+            I&rsquo;m hands-on by nature. Across these initiatives, my role
+            spans problem identification, analysis, solution design,
+            AI-assisted prototyping and development, workflow design,
+            stakeholder collaboration, and planning how individual
+            capabilities evolve into more scalable systems.
           </p>
+        </div>
+      </section>
+
+      {/* Bridge to experiments + CTA */}
+      <section className="mt-12 border-t border-[var(--border-solid)] pt-8">
+        <p className="text-sm text-foreground">
+          I also make things just to see what happens.{" "}
+          <Link
+            href="/#experiments"
+            className="text-muted underline decoration-[var(--border-solid)] underline-offset-2 transition-colors hover:text-foreground hover:decoration-foreground"
+          >
+            Explore experiments →
+          </Link>
+        </p>
+
+        <div className="relative mt-6 overflow-hidden rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-4 pl-5">
+          <div
+            className="absolute inset-y-0 left-0 w-[3px]"
+            style={{ background: "var(--brand-gradient)" }}
+          />
+          <p className="text-sm leading-relaxed text-foreground">
+            I&rsquo;m interested in applied AI, AI enablement,
+            experimentation, emerging technology, and hands-on transformation
+            roles.
+          </p>
+          <a
+            href="https://www.linkedin.com/in/rbischoff/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-block rounded-lg border border-[var(--border-solid)] px-3 py-1.5 text-sm text-foreground transition-colors hover:border-[var(--brand-1)] hover:bg-[var(--surface-hover)]"
+          >
+            Connect with me on LinkedIn ↗
+          </a>
         </div>
       </section>
 

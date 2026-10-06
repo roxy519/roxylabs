@@ -19,7 +19,7 @@ export const caseStudies: CaseStudy[] = [
     subtitle: "Turning fragmented customer communications into a connected view",
     tags: ["Applied AI", "Customer Experience", "Digital Transformation"],
     summary:
-      "Led a cross-functional communications mapping initiative, then used AI-assisted development to turn the data into an interactive tool for exploring the customer journey and identifying gaps and overlaps.",
+      "Researched and structured a fragmented customer-communications landscape, then developed an interactive tool for analysis, scenario modeling, and implementation planning — now informing a cross-functional transformation process.",
     year: 2026,
   },
   {

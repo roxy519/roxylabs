@@ -8,7 +8,7 @@ import { HeroBackdrop } from "@/app/components/motifs";
 import { ExperimentsSection } from "@/app/components/experiments-section";
 
 const SITE_DESCRIPTION =
-  "Experiments and selected work in automation, marketing, operations, AI, and creative technology.";
+  "Applied AI, experimentation, and useful things made from messy problems — small tools, experiments, and selected work.";
 
 export const metadata: Metadata = {
   openGraph: {
@@ -60,10 +60,21 @@ export default function Home() {
               <span className="brand-text">roxylabs</span>
             </h1>
             <div className="rule-gradient mt-3 mx-auto w-16 sm:mx-0" />
-            <p className="mt-3 max-w-xl text-base text-muted sm:text-lg">
-              experiments and selected work in automation, marketing,
-              operations, AI, and creative technology.
+            <p className="mt-3 max-w-xl text-base text-foreground sm:text-lg">
+              applied AI, experimentation, and useful things made from messy
+              problems.
             </p>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
+              I explore how AI, automation, data, and emerging technology can
+              turn operational friction and complex information into tools
+              people can actually use.
+            </p>
+            <Link
+              href="/work"
+              className="mt-4 inline-block text-sm text-muted transition-colors hover:text-foreground"
+            >
+              selected work &amp; how I approach it →
+            </Link>
           </div>
         </div>
       </section>
