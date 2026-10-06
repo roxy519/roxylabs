@@ -57,13 +57,13 @@ export default function Page() {
     >
       <AtAGlance
         stats={[
-          { value: "31", label: "Source documents synthesized" },
-          { value: "219+", label: "Recurring Marketing + triggered emails incorporated" },
-          { value: "6", label: "Sales stakeholders consulted in discovery" },
-          { value: "15+", label: "Communication channels and surfaces considered" },
+          { value: "35", label: "Source documents synthesized" },
+          { value: "250+", label: "Recurring emails incorporated" },
+          { value: "15", label: "Stakeholders consulted in discovery" },
+          { value: "19", label: "Communication channels and surfaces considered" },
           { value: "5", label: "Views, from landscape to implementation roadmap" },
         ]}
-        note="Scope of the inputs and analysis — not outcomes. 219+ is the known Marketing and triggered email inventory (52 ongoing + 167 recurring triggered), not a count of every communication across all channels."
+        note="Scope of the inputs and analysis — not outcomes. 250+ is the known recurring email inventory (ongoing Marketing and triggered emails), not a count of every communication across all channels."
       />
 
       <Section heading="The challenge">
@@ -95,11 +95,11 @@ export default function Page() {
         </p>
         <DefList
           items={[
-            { term: "Documents", detail: "31 source and reference documents synthesized" },
+            { term: "Documents", detail: "35 source and reference documents synthesized" },
             {
               term: "Email",
               detail:
-                "52 ongoing Marketing emails and 167 recurring triggered emails (219+ in all), plus Customer Support email",
+                "250+ recurring emails — ongoing Marketing and triggered — plus Customer Support email",
             },
             { term: "Messaging", detail: "Marketing SMS, Sales text messaging, and live chat" },
             {
@@ -110,14 +110,14 @@ export default function Page() {
             { term: "Phone & mail", detail: "Customer phone hotline, Sales phone, and direct mail" },
             {
               term: "People",
-              detail: "Discovery with 6 Sales stakeholders to understand their communications",
+              detail: "Discovery with 15 stakeholders to understand their communications",
             },
           ]}
         />
         <p className="text-muted">
           Other communications were investigated and removed once they were
-          determined not to be relevant. The 219+ figure covers the known
-          Marketing and triggered email inventory only — it isn&rsquo;t a count of
+          determined not to be relevant. The 250+ figure covers the known
+          recurring email inventory only — it isn&rsquo;t a count of
           every communication across the ecosystem.
         </p>
       </Section>
@@ -176,10 +176,10 @@ export default function Page() {
 
         <CaseStudyImage
           src="/Comms-timeline-preview.png"
-          alt="Sanitized screenshot of the communications intelligence workspace, showing the timeline view with channel, category, and product filters"
-          width={1652}
-          height={952}
-          caption="Sanitized Timeline view. Communications are mapped onto one journey by days before departure and can be filtered by channel, category, and product."
+          alt="Sanitized screenshot of the Timeline view, showing daily communication volume by channel across the preparation phase, with channel, communication type, and audience/product filters and tabs for Landscape, Best Practices, Recommendations, and Roadmap"
+          width={1820}
+          height={864}
+          caption="Sanitized Timeline view. Communications are mapped onto one journey by days relative to a key date, with daily volume by channel, filterable by channel, communication type, and audience/product."
           subcaption="Recreated with representative data. Proprietary company information and performance data have been removed."
         />
 

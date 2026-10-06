@@ -23,25 +23,28 @@ export function CaseStudyImage({
   return (
     <>
       <div className="w-full">
-        <button
-          type="button"
-          onClick={() => setExpanded(true)}
-          className="glow-frame relative block w-full cursor-zoom-in overflow-hidden rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-2 transition-colors hover:bg-[var(--surface-hover)] sm:p-3"
-          aria-label={`Expand image: ${alt}`}
-        >
-          <span className="data-badge absolute left-4 top-4 z-10 sm:left-5 sm:top-5">
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setExpanded(true)}
+            className="glow-frame relative block w-full cursor-zoom-in overflow-hidden rounded-xl border border-[var(--border-solid)] bg-[var(--surface)] p-2 transition-colors hover:bg-[var(--surface-hover)] sm:p-3"
+            aria-label={`Expand image: ${alt}`}
+          >
+            <Image
+              src={src}
+              alt={alt}
+              width={width}
+              height={height}
+              className="w-full rounded-lg"
+              sizes="(min-width: 768px) 720px, 100vw"
+            />
+          </button>
+          {/* Straddles the frame's bottom edge so it never covers the screenshot. */}
+          <span className="data-badge pointer-events-none absolute bottom-0 right-4 z-10 translate-y-1/2">
             representative data
           </span>
-          <Image
-            src={src}
-            alt={alt}
-            width={width}
-            height={height}
-            className="w-full rounded-lg"
-            sizes="(min-width: 768px) 720px, 100vw"
-          />
-        </button>
-        <p className="mt-3 text-sm leading-relaxed text-foreground">
+        </div>
+        <p className="mt-5 text-sm leading-relaxed text-foreground">
           {caption}
         </p>
         <p className="mt-1 text-xs text-muted">{subcaption}</p>
