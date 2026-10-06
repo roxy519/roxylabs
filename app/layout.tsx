@@ -19,11 +19,11 @@ export const metadata: Metadata = {
     template: "%s · roxylabs",
   },
   description:
-    "Experiments in ai, automation, marketing, operations, and creative projects.",
+    "Applied AI, experimentation, and useful things made from messy problems.",
   openGraph: {
     title: "roxylabs",
     description:
-      "Experiments in ai, automation, marketing, operations, and creative projects.",
+      "Applied AI, experimentation, and useful things made from messy problems.",
     url: "https://www.roxylabs.io",
     siteName: "roxylabs",
     type: "website",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "roxylabs",
     description:
-      "Experiments in ai, automation, marketing, operations, and creative projects.",
+      "Applied AI, experimentation, and useful things made from messy problems.",
   },
 };
 

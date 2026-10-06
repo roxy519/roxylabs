@@ -141,8 +141,8 @@ export function ExperimentsSection({ experiments }: { experiments: Experiment[] 
     : experiments;
 
   return (
-    <section className="mt-16">
-      <div className="mb-6 flex items-baseline justify-between">
+    <section id="experiments" className="mt-16 scroll-mt-8">
+      <div className="mb-2 flex items-baseline justify-between">
         <h2 className="text-sm uppercase tracking-widest text-muted">
           experiments
         </h2>
@@ -165,6 +165,11 @@ export function ExperimentsSection({ experiments }: { experiments: Experiment[] 
           )}
         </span>
       </div>
+
+      <p className="mb-6 max-w-xl text-sm leading-relaxed text-muted">
+        Small tools and experiments I create to explore an idea, solve a
+        problem, or learn what a technology can do.
+      </p>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((experiment) => (

@@ -115,7 +115,7 @@ export default function Page() {
 
       <Section heading="Building toward a smarter system">
         <p>
-          The initial tool solves immediate operational problems, but I
+          The initial tool addresses immediate operational needs, but I
           designed it with a broader optimization model in mind. The next
           stage incorporates:
         </p>
@@ -160,9 +160,9 @@ export default function Page() {
           to create something people can actually use.
         </p>
         <p>
-          The technology is valuable because it can reduce manual work,
-          surface decisions earlier, control costs, improve consistency, and
-          eventually turn historical marketing performance into actionable
+          The design goals are to reduce manual work, surface decisions
+          earlier, control costs, and improve consistency — and eventually
+          to turn historical marketing performance into actionable
           recommendations at the moment marketers need them.
         </p>
       </Section>
