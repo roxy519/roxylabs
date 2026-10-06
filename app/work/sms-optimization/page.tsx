@@ -70,9 +70,9 @@ export default function Page() {
 
         <CaseStudyImage
           src="/SMS-optimizer-preview.png"
-          alt="Sanitized screenshot of the SMS optimization workspace, showing the message calculator and credit estimate"
-          width={790}
-          height={925}
+          alt="Sanitized screenshot of the SMS optimization workspace: a message calculator (send type, audience, recipients, trigger, message copy) beside a credit estimate with encoding, segment count, and copy recommendations"
+          width={1562}
+          height={1007}
           caption="Sanitized view of the SMS optimization workspace, combining message planning, credit estimation, SMS encoding and segmentation analysis, campaign management, and copy guidance."
           subcaption="Recreated with representative data. Proprietary company information, internal cost structures, and campaign data have been removed."
         />
