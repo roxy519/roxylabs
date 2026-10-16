@@ -20,7 +20,7 @@ const PALETTE: [string, string][] = [
 // Off-target-distance at which a positional dimension scores 0 (in % of playfield).
 const POS_ZERO = 42;
 // Fill used for the optical-center shapes so visual mass tracks area, not colour.
-const SHAPE_FILL = "rgba(237, 237, 237, 0.85)";
+const SHAPE_FILL = "var(--shape-fill)";
 
 function rand(min: number, max: number) {
   return min + Math.random() * (max - min);
@@ -533,7 +533,7 @@ export default function ByEye() {
             <span className="text-2xl text-muted">/100</span>
           </div>
           {timedOut && (
-            <p className="mt-1 text-sm font-semibold text-amber-400">⏱ Time&apos;s up!</p>
+            <p className="mt-1 text-sm font-semibold text-[var(--warn)]">⏱ Time&apos;s up!</p>
           )}
           <p className="mt-1 text-sm text-foreground">{result.verdict}</p>
 
@@ -570,7 +570,7 @@ export default function ByEye() {
             <div className="mb-6 border-b border-[var(--border-solid)] pb-6">
               <div className="text-xs uppercase tracking-widest text-muted">round 5</div>
               {timedOut && (
-                <p className="mt-1 text-sm font-semibold text-amber-400">⏱ Time&apos;s up!</p>
+                <p className="mt-1 text-sm font-semibold text-[var(--warn)]">⏱ Time&apos;s up!</p>
               )}
               <div className="mt-1 text-3xl font-bold">
                 <span className="brand-text">{result.score}</span>
@@ -650,7 +650,7 @@ function Playfield({
           {!locked && (
             <div
               className="absolute right-3 top-3 text-sm font-semibold tabular-nums"
-              style={{ color: timeLeft <= 10 ? "#ea2626" : "#38d8cb" }}
+              style={{ color: timeLeft <= 10 ? "var(--timer-urgent)" : "var(--timer-ok)" }}
             >
               {timeLeft}s
             </div>
@@ -672,7 +672,7 @@ function Playfield({
         <>
           <div
             className="absolute aspect-square -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{ width: `${setup.left.d}%`, left: `${setup.left.x}%`, top: `${setup.left.y}%`, background: "#8a8a8d" }}
+            style={{ width: `${setup.left.d}%`, left: `${setup.left.x}%`, top: `${setup.left.y}%`, background: "var(--shape-muted)" }}
           />
           <div
             className="absolute aspect-square -translate-x-1/2 -translate-y-1/2 rounded-full"
