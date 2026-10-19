@@ -61,10 +61,25 @@ function parseRssItems(xml: string): { title: string; link: string }[] {
   return items;
 }
 
+// Strip tags both before and after decoding: some feeds (e.g. the Guardian)
+// entity-encode their HTML (`&lt;p&gt;`) instead of using CDATA, so those
+// tags only become real tags once decoded.
 function stripHtml(s: string): string {
-  return decodeEntities(s.replace(/<[^>]+>/g, " "))
+  const noTags = (t: string) => t.replace(/<[^>]*>/g, " ");
+  return noTags(decodeEntities(noTags(s)))
     .replace(/\s+/g, " ")
     .trim();
+}
+
+/**
+ * Some feeds (e.g. the Guardian) pack the standfirst plus the article's
+ * opening paragraph into one description as separate <p>s. Only the first
+ * paragraph is the dek; the rest would run straight into it once tags go.
+ */
+function descriptionText(raw: string): string {
+  const html = decodeEntities(stripCdata(raw.trim()));
+  const firstPara = html.match(/<p[^>]*>([\s\S]*?)<\/p>/i);
+  return stripHtml(firstPara ? firstPara[1] : html);
 }
 
 /** First one or two sentences only — never the full body. */
@@ -93,7 +108,7 @@ function parseNativeRssItems(
     if (!titleMatch || !linkMatch) continue;
     const title = decodeEntities(stripCdata(titleMatch[1]).trim());
     const link = decodeEntities(stripCdata(linkMatch[1]).trim());
-    const description = descMatch ? stripHtml(stripCdata(descMatch[1])) : "";
+    const description = descMatch ? descriptionText(descMatch[1]) : "";
     if (title && link) items.push({ title, link, description });
   }
   return items;

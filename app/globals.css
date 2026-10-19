@@ -38,6 +38,46 @@
   /* Hairline grid texture, tuned to stay near-subliminal on dark backgrounds. */
   --grid-line: rgba(237, 237, 237, 0.05);
   --grid-line-strong: rgba(237, 237, 237, 0.08);
+
+  /* Theme-sensitive extras used by components. */
+  --shape-fill: rgba(237, 237, 237, 0.85);
+  --shape-muted: #8a8a8d;
+  --link: #ebebeb;
+  --timer-ok: #38d8cb;
+  --timer-urgent: #ea2626;
+  --warn: #fbbf24;
+  --overlay: rgba(0, 0, 0, 0.85);
+  color-scheme: dark;
+}
+
+/* Light theme — a warm off-white lab bench. Brand hues stay the same but
+   glows soften and text-bearing accents darken for contrast. */
+:root[data-theme="light"] {
+  --background: #f6f5f1;
+  --surface: #ffffff;
+  --surface-hover: #eeece6;
+  --border-solid: #d9d6cc;
+  --foreground: #16171d;
+  --muted: #5c5f6b;
+
+  --brand-1: #6a46f0;
+  --brand-2: #e0187a;
+  --brand-3: #0e8fa8;
+
+  --glow-magenta: rgba(255, 47, 143, 0.2);
+  --glow-purple: rgba(124, 92, 255, 0.22);
+  --glow-cyan: rgba(34, 211, 238, 0.2);
+
+  --grid-line: rgba(22, 23, 29, 0.06);
+  --grid-line-strong: rgba(22, 23, 29, 0.1);
+
+  --shape-fill: rgba(22, 23, 29, 0.82);
+  --shape-muted: #8a8a8d;
+  --link: #16171d;
+  --timer-ok: #0e8fa8;
+  --timer-urgent: #d11a1a;
+  --warn: #b45309;
+  color-scheme: light;
 }
 
 @theme inline {
@@ -50,6 +90,7 @@
 }
 
 body {
+  transition: background-color 0.2s ease, color 0.2s ease;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
