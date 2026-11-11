@@ -14,6 +14,15 @@ export type CaseStudy = {
 
 export const caseStudies: CaseStudy[] = [
   {
+    slug: "digital-operations-ai-guide",
+    title: "Digital Operations AI Guide",
+    subtitle: "Making AI useful in everyday digital operations",
+    tags: ["Applied AI", "AI Adoption", "Digital Operations", "Enablement"],
+    summary:
+      "An interactive guide I designed and built to help a digital operations team find the right AI tools for their work, use them responsibly, discover existing solutions, and accelerate practical AI adoption.",
+    year: 2026,
+  },
+  {
     slug: "communications-intelligence",
     title: "Communications Intelligence",
     subtitle: "Turning fragmented customer communications into a connected view",
